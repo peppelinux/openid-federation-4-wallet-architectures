@@ -455,6 +455,18 @@ Statements, as defined in [@!OpenID.Federation], critical configuration and
 authorization decisions move from ad‑hoc, per‑instance configuration into a
 federated, policy-driven framework anchored in the Trust Anchor and the Superior Entities.
 
+### OpenID Federation Client IDs Used with OpenID for Verifiable Presentations
+
+Note that Section 5.9.3 of [@!OpenID4VP] defines that the Client ID values
+specified by Section 12.1 of [@!OpenID.Federation], which are Entity Identifiers,
+MUST be prefixed by `openid_federation:` when used with [@!OpenID4VP].
+Therefore, such Client IDs MUST be prefixed when used with
+[@!OpenID4VP] protocols and APIs
+and the prefix MUST be removed from any Client IDs received from
+[@!OpenID4VP] protocols and APIs
+when used with this specification and OpenID Federation.
+
+
 # Federation Policies
 
 Policies refer to a set of rules that govern the operations, security, and interactions within a federation.
@@ -1023,6 +1035,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -06
+
+   * Added note on prefixing Client ID values used with OpenID4VP.
 
    -05
 
