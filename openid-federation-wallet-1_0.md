@@ -598,6 +598,8 @@ Trust Marks SHOULD be defined within the trust framework. Trust Marks are assert
 
 The process of trust establishment in federated environments is illustrated in this section through specific use cases involving Wallet Instances, Credential Issuers (CIs), and Credential Verifiers (CVs).
 
+These use cases are independent: a trust framework MAY require support for any subset of them. Normative requirements in a use case apply only when that use case is used for OpenID Federation trust establishment.
+
 ## Establishing Trust with a Credential Verifier Instance
 
 A Credential Verifier Instance is typically installed on a mobile device, personal computer, or embedded system. It enables an individual to perform Digital Credential verification tasks locally, often in proximity to the Holder, and without necessarily requiring a broadband connection. This instance engages in peer-to-peer exchanges with Holders, facilitating Credential verifications directly on the device. This approach represents a shift from traditional server-based verification to a more user-centric model within the Wallet ecosystem.
@@ -826,6 +828,91 @@ Note: While this section exemplifies the journey of discovery from the perspecti
 ~~~
 **Figure 6**: Federation Entity Discovery, the Wallet Instance evaluates the trust with a Credential Verifier.
 
+## Credential Verifiers Establishing Trust in Credential Issuers
+
+When a Credential Verifier uses OpenID Federation to establish trust in the Credential Issuer of a presented Digital Credential, the Credential Verifier MUST validate that:
+
+1. the cryptographic key used to sign the Digital Credential is (or was, at the time of issuance) bound to that Credential Issuer;
+2. the Credential Issuer is the Entity it claims to be; and
+3. where required by the trust framework, the Credential Issuer is entitled to issue that Credential (for example, via Trust Marks or metadata policy evaluated over the Trust Chain).
+
+This use case applies only when OpenID Federation is the trust mechanism used for that verification. An `https` issuer identifier in a Digital Credential does not by itself imply that the Credential Issuer participates in an OpenID Federation; other key-resolution mechanisms (for example, those defined by SD-JWT VC) MAY apply outside this use case.
+
+### Obtaining the Credential Issuer Entity Identifier
+
+OpenID Federation Entity Identifiers MUST be `https` URLs, as defined in [@!OpenID.Federation].
+
+When this use case applies and the Credential Issuer is identified in the Digital Credential by an `https` URL (for example, the `iss` claim in an SD-JWT VC or JWT-secured Credential, or the `issuer` / `issuer.id` value in a W3C Verifiable Credential), that URL MUST be used as the Credential Issuer's Federation Entity Identifier. That Entity Identifier MUST equal the `credential_issuer` metadata value and the `iss`/`sub` pair of the Credential Issuer's Entity Configuration, as profiled in the OpenID Credential Issuer Metadata Parameters section of this specification.
+
+Alternative issuer identifiers that are not `https` URLs (for example, DIDs), and format-specific bindings such as ISO mDOC X.509 certificate chains, are out of scope for this version of the specification.
+
+### Federation Entity Discovery and Credential Validation
+
+The Credential Verifier MUST establish trust in the Credential Issuer using Federation Entity Discovery as defined in [@!OpenID.Federation], equivalent to the process illustrated for Wallets in Figure 5:
+
+1. Fetch the Credential Issuer's Entity Configuration using the Entity Identifier obtained above.
+2. Follow `authority_hints`, collect Subordinate Statements, and construct a Trust Chain to a Trust Anchor configured by the Credential Verifier.
+3. Validate the Trust Chain cryptographically and for temporal validity.
+4. Apply metadata policies and obtain the Credential Issuer's final metadata, including cryptographic keys used to verify issued Credentials (for example, keys in `openid_credential_issuer` `jwks`).
+5. Verify the presented Digital Credential using that validated key material, and evaluate any Trust Marks or policies required by the trust framework for issuance entitlement.
+
+Alternatively, when the presented Digital Credential includes the `trust_chain` JOSE header parameter defined in Section 4.3 of [@!OpenID.Federation], the Credential Verifier MAY validate that Trust Chain offline as described in the Implementation Considerations for Offline Flows section, without performing real-time Federation Entity Discovery. The Credential Verifier MUST still validate the Trust Chain using a configured Trust Anchor's public keys and MUST verify the Digital Credential using key material consistent with the validated chain.
+
+~~~ ascii-art
+        +-------------------+                      +-----------------+ +-------------------------+
+        |Credential Verifier|                      |Credential Issuer| |Intermediate/Trust Anchor|
+        +--------+----------+                      +--------+--------+ +--------+----------------+
+                 |       Fetch Entity Configuration         |                     |
+                 |----------------------------------------->|                     |
+                 |                                          |                     |
+                 |----+                                     |                     |
+                 |    | Extract Authority Hints             |                     |
+                 |    | from Entity Configuration           |                     |
+                 |<---+                                     |                     |
+                 |                                          |                     |
++-------+--------+------------------------------------------+---------------------+----------+
+| LOOP  |for each Authority Hint                            |                     |          |
++-------+        |                                          |                     |          |
+|                |                   Fetch Entity Configuration                   |          |
+|                |--------------------------------------------------------------->|          |
+|                |                                          |                     |          |
+|                |                    Fetch Subordinate Statement                 |          |
+|                |--------------------------------------------------------------->|          |
+|                |                                          |                     |          |
+|                |----+                                     |                     |          |
+|                |    | Validate the previous statement     |                     |          |
+|                |<---+ using the Federation Entity Keys    |                     |          |
+|                |      provided in the Subordinate Statement|                    |          |
+|                |                                          |                     |          |
++----------------+------------------------------------------+---------------------+----------+
+                 |                                          |                     |
+                 |----+                                     |                     |
+                 |    | Validate Trust Chain                |                     |
+                 |<---+                                     |                     |
+                 |                                          |                     |
++------+---------+---------------------------------------+  |                     |
+| ALT  |If Trust Chain is Valid and Unexpired            |  |                     |
++------+         |                                       |  |                     |
+|                |----+                                  |  |                     |
+|                |    | Derive final metadata and keys   |  |                     |
+|                |<---+                                  |  |                     |
+|                |                                       |  |                     |
+|                |----+                                  |  |                     |
+|                |    | Verify Digital Credential        |  |                     |
+|                |    | and evaluate issuance policies   |  |                     |
+|                |<---+                                  |  |                     |
++----------------+---------------------------------------+  |                     |
+|                |                                       |  |                     |
+|                |----+                                  |  |                     |
+|                |    | Abort Process with Error         |  |                     |
+|                |<---+                                  |  |                     |
++----------------+---------------------------------------+  |                     |
+        +--------+----------+                      +--------+--------+ +--------+----------------+
+        |Credential Verifier|                      |Credential Issuer| |Intermediate/Trust Anchor|
+        +-------------------+                      +-----------------+ +-------------------------+
+~~~
+**Figure 7**: Federation Entity Discovery, the Credential Verifier evaluates trust with a Credential Issuer.
+
 # Implementation Considerations for Offline Flows
 
 The static Trust Chain parameter within the JWT headers, as defined in Section 4.3 of [@!OpenID.Federation], is used as a hint to the Entity involved in a transaction with a common Trust Anchor. This facilitates trust evaluation without the need for real-time Federation Entity Discovery using Federation API endpoints.
@@ -834,7 +921,7 @@ The Entity that issues a signed data object, including the `trust_chain` paramet
 
 - Wallet Providers in signed Wallet Attestations. The Wallet Instance obtains one or more Wallet Attestations from its Wallet Provider, each of them including a Trust Chain related to each Trust Anchor the Wallet Provider trusts;
 - Credential Verifiers in signed request objects. The Wallet Instance obtains a presentation request that includes a Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the information obtained in the `wallet_metadata` parameter provided by the Wallet using the Request URI POST;
-- A Credential Issuer in a signed Digital Credential. The Wallet Instance obtains a Digital Credential from its Credential Issuer, which includes the Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the Wallet Attestation used during the Issuance.
+- Credential Issuers in signed Digital Credentials. A Credential Verifier (or Wallet Instance) obtaining such a Credential MAY use the included Trust Chain to establish trust in the Credential Issuer without real-time Federation Entity Discovery, as described in Credential Verifiers Establishing Trust in Credential Issuers.
 
 The Entity that receives the data object including the JWT `trust_chain`, such as the Wallet Instance obtaining a signed request object, verifies the Trust Chain using the Trust Anchor's public keys and applies any metadata policies, without needing to have a working network connection for reaching the Federation API.
 
@@ -1023,6 +1110,18 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -06
+
+   * Added Federation Trust Discovery use case "Credential Verifiers
+     Establishing Trust in Credential Issuers" to resolve
+     federation-wallet issue #48: map https issuer identifiers in
+     presented Credentials to Federation Entity Identifiers, perform
+     Federation Entity Discovery (or validate an offline `trust_chain`),
+     and verify Credentials with keys from the validated Trust Chain.
+     DIDs and ISO mDOC X.509 bindings remain out of scope for this
+     version. Clarified that Trust Discovery use cases are independently
+     adoptable by trust frameworks.
 
    -05
 
