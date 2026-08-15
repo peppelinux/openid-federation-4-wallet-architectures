@@ -1,5 +1,5 @@
 %%%
-title = "OpenID Federation for Wallet Architectures 1.0 - draft 05"
+title = "OpenID Federation for Wallet Architectures 1.0 - draft 06"
 abbrev = "OpenID Federation for Wallet Architectures"
 ipr = "none"
 workgroup = "OpenID Connect Working Group"
@@ -462,11 +462,18 @@ specified by Section 12.1 of [@!OpenID.Federation], which are Entity Identifiers
 MUST be prefixed by `openid_federation:` when used with [@!OpenID4VP].
 Therefore, such Client IDs MUST be prefixed when used with
 [@!OpenID4VP] protocols and APIs
-and the prefix MUST be disregarded from any Client IDs received from
+and the prefix MUST be removed from any Client IDs received from
 [@!OpenID4VP] protocols and APIs
-when applying the processing rules in OpenID Federation 1.0. The prefix MUST be used wherever the client id is used in responses, for example `aud` values in JWTs.
-To guard against confusion attacks with other protocols, Authorization servers are suggested to implement this by internally prefixing all federation client_ids with `openid_federation:`, ensuring non-federation clients cannot be assigned a client id beginning with `openid_federation:`, and removing the prefix when returning replies to Federation 1.0 clients.
-
+when applying the processing rules in OpenID Federation 1.0 and this specification.
+For example, the prefix MUST be included in
+the `client_id` values in the Authorization Requests defined in
+Section 5 of [@!OpenID4VP],
+the `client_id` values in the key-bound attestations defined in
+Section 5.11.1 of [@!OpenID4VP], and
+the `aud` values in the Presentation Responses defined in
+Appendix B of [@!OpenID4VP].
+Together, these rules enable compliance with
+Section 14.8 of [@!OpenID4VP] (Always Use the Full Client Identifier).
 
 # Federation Policies
 
