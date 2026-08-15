@@ -1212,7 +1212,7 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left"></td>
 <td class="center">OpenID Federation for Wallet Architectur</td>
-<td class="right">April 2026</td>
+<td class="right">August 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">De Marco, et al.</td>
@@ -1227,7 +1227,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">OpenID Connect Working Group</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-04-08" class="published">8 April 2026</time>
+<time datetime="2026-08-15" class="published">15 August 2026</time>
     </dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
@@ -1964,9 +1964,10 @@ specified by Section 12.1 of <span>[<a href="#OpenID.Federation" class="cite xre
 MUST be prefixed by <code>openid_federation:</code> when used with <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span>.
 Therefore, such Client IDs MUST be prefixed when used with
 <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span> protocols and APIs
-and the prefix MUST be removed from any Client IDs received from
+and the prefix MUST be disregarded from any Client IDs received from
 <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span> protocols and APIs
-when used with this specification and OpenID Federation.<a href="#section-6.3.2-1" class="pilcrow">¶</a></p>
+when applying the processing rules in OpenID Federation 1.0. The prefix MUST be used wherever the client id is used in responses, for example <code>aud</code> values in JWTs.
+To guard against confusion attacks with other protocols, Authorization servers are suggested to implement this by internally prefixing all federation client_ids with <code>openid_federation:</code>, ensuring non-federation clients cannot be assigned a client id beginning with <code>openid_federation:</code>, and removing the prefix when returning replies to Federation 1.0 clients.<a href="#section-6.3.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2461,7 +2462,7 @@ Niels van Dijk.<a href="#section-12-1" class="pilcrow">¶</a></p>
 <dl class="references">
 <dt id="I-D.ietf-oauth-status-list">[I-D.ietf-oauth-status-list]</dt>
       <dd>
-<span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Bastian, P.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"Token Status List (TSL)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-status-list-19</span>, <time datetime="2026-03-20" class="refDate">20 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-19">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-19</a>&gt;</span>. </dd>
+<span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Bastian, P.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"Token Status List (TSL)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-status-list-21</span>, <time datetime="2026-06-21" class="refDate">21 June 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-21">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-21</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="OpenID.Core">[OpenID.Core]</dt>
       <dd>
