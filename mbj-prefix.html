@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>OpenID Federation for Wallet Architectures 1.0 - draft 05</title>
+<title>OpenID Federation for Wallet Architectures 1.0 - draft 06</title>
 <meta content="Giuseppe De Marco" name="author">
 <meta content="Roland Hedberg" name="author">
 <meta content="Michael B. Jones" name="author">
@@ -1250,7 +1250,7 @@ li > p:last-of-type:only-child {
 </dd>
 </dl>
 </div>
-<h1 id="title">OpenID Federation for Wallet Architectures 1.0 - draft 05</h1>
+<h1 id="title">OpenID Federation for Wallet Architectures 1.0 - draft 06</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This specification defines the OpenID Federation entity types for
@@ -1964,10 +1964,18 @@ specified by Section 12.1 of <span>[<a href="#OpenID.Federation" class="cite xre
 MUST be prefixed by <code>openid_federation:</code> when used with <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span>.
 Therefore, such Client IDs MUST be prefixed when used with
 <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span> protocols and APIs
-and the prefix MUST be disregarded from any Client IDs received from
+and the prefix MUST be removed from any Client IDs received from
 <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span> protocols and APIs
-when applying the processing rules in OpenID Federation 1.0. The prefix MUST be used wherever the client id is used in responses, for example <code>aud</code> values in JWTs.
-To guard against confusion attacks with other protocols, Authorization servers are suggested to implement this by internally prefixing all federation client_ids with <code>openid_federation:</code>, ensuring non-federation clients cannot be assigned a client id beginning with <code>openid_federation:</code>, and removing the prefix when returning replies to Federation 1.0 clients.<a href="#section-6.3.2-1" class="pilcrow">¶</a></p>
+when applying the processing rules in OpenID Federation 1.0 and this specification.
+For example, the prefix MUST be included in
+the <code>client_id</code> values in the Authorization Requests defined in
+Section 5 of <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span>,
+the <code>client_id</code> values in the key-bound attestations defined in
+Section 5.11.1 of <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span>, and
+the <code>aud</code> values in the Presentation Responses defined in
+Appendix B of <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span>.
+Together, these rules enable compliance with
+Section 14.8 of <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span> (Always Use the Full Client Identifier).<a href="#section-6.3.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
