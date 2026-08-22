@@ -1212,7 +1212,7 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left"></td>
 <td class="center">OpenID Federation for Wallet Architectur</td>
-<td class="right">July 2026</td>
+<td class="right">August 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">De Marco, et al.</td>
@@ -1227,7 +1227,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">OpenID Connect Working Group</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-20" class="published">20 July 2026</time>
+<time datetime="2026-08-22" class="published">22 August 2026</time>
     </dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
@@ -2289,9 +2289,9 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
         </h3>
 <p id="section-8.5-1">During Credential issuance, establishing trust in the Wallet comprises two related but distinct evaluations, as described in Section 13.3 of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span> (<em>Trust between Wallet and Issuer</em>):<a href="#section-8.5-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="compact type-1" id="section-8.5-2">
-<li id="section-8.5-2.1">Trust in the Wallet Solution / Wallet Instance authenticity, using Wallet Attestation as client authentication; and<a href="#section-8.5-2.1" class="pilcrow">¶</a>
+<li id="section-8.5-2.1">Trust in the Wallet Solution / Wallet Instance authenticity, using the Wallet Attestation as client authentication; and<a href="#section-8.5-2.1" class="pilcrow">¶</a>
 </li>
-          <li id="section-8.5-2.2">When required, trust in the cryptographic key material and its protection properties, using Key Attestation in the Credential Request.<a href="#section-8.5-2.2" class="pilcrow">¶</a>
+          <li id="section-8.5-2.2">When required, trust in the cryptographic key material and its protection properties, using the Key Attestation in the Credential Request.<a href="#section-8.5-2.2" class="pilcrow">¶</a>
 </li>
         </ol>
 <div id="wallet-attestation">
@@ -2299,7 +2299,7 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
           <h4 id="name-wallet-attestation">
 <a href="#section-8.5.1" class="section-number selfRef">8.5.1. </a><a href="#name-wallet-attestation" class="section-name selfRef">Wallet Attestation</a>
           </h4>
-<p id="section-8.5.1-1">During the issuance phase, the Wallet Instance authenticates with the Credential Issuer's Authorization Server using Wallet Attestation as defined in Appendix E of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>, following OAuth 2.0 Attestation-Based Client Authentication <span>[<a href="#I-D.ietf-oauth-attestation-based-client-auth" class="cite xref">I-D.ietf-oauth-attestation-based-client-auth</a>]</span>. The Wallet Attestation is a Client Attestation JWT issued by the Wallet Provider. The Wallet Instance MUST also present a Client Attestation Proof of Possession (PoP) JWT proving control of the key confirmed in the <code>cnf</code> claim of that attestation, as specified in <span>[<a href="#I-D.ietf-oauth-attestation-based-client-auth" class="cite xref">I-D.ietf-oauth-attestation-based-client-auth</a>]</span>.<a href="#section-8.5.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.5.1-1">During the issuance phase, the Wallet Instance authenticates with the Credential Issuer's Authorization Server using Wallet Attestation as defined in Appendix E of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>, following OAuth 2.0 Attestation-Based Client Authentication <span>[<a href="#I-D.ietf-oauth-attestation-based-client-auth" class="cite xref">I-D.ietf-oauth-attestation-based-client-auth</a>]</span>. The Wallet Attestation is a Client Attestation JWT issued by the Wallet Provider. The Wallet Instance MUST also present a Client Attestation Proof of Possession (PoP) JWT proving control of the confirmation key in the <code>cnf</code> claim of that attestation, as specified in <span>[<a href="#I-D.ietf-oauth-attestation-based-client-auth" class="cite xref">I-D.ietf-oauth-attestation-based-client-auth</a>]</span>.<a href="#section-8.5.1-1" class="pilcrow">¶</a></p>
 <p id="section-8.5.1-2">As described in Appendix E of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>, the Wallet Attestation MAY be presented at the Pushed Authorization Request endpoint and/or the Token endpoint.<a href="#section-8.5.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.5.1-3">To establish trust with the Wallet Instance, the Credential Issuer MUST first establish trust with the Wallet Provider that issued the Wallet Attestation, as described in the previous section. The Credential Issuer MUST cryptographically validate the Wallet Attestation using the cryptographic material obtained from that federation Trust Chain (for example, Federation Entity Keys or keys in the Wallet Provider's Entity Configuration). The Credential Issuer MUST also validate the Client Attestation PoP JWT against the key in the <code>cnf</code> claim of the Wallet Attestation, as specified in <span>[<a href="#I-D.ietf-oauth-attestation-based-client-auth" class="cite xref">I-D.ietf-oauth-attestation-based-client-auth</a>]</span>.<a href="#section-8.5.1-3" class="pilcrow">¶</a></p>
 <p id="section-8.5.1-4">When used in a Wallet federation, Wallet Attestation JWTs SHOULD include the <code>trust_chain</code> JOSE header parameter defined in Section 4.3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>, so that the Credential Issuer can validate the Wallet Provider without performing real-time Federation Entity Discovery. See also the Implementation Considerations for Offline Flows section.<a href="#section-8.5.1-4" class="pilcrow">¶</a></p>
