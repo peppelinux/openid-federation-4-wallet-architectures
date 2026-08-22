@@ -752,12 +752,12 @@ When a Wallet Attestation or Key Attestation includes a `trust_chain` header par
 
 During Credential issuance, establishing trust in the Wallet comprises two related but distinct evaluations, as described in Section 13.3 of [@!OpenID4VCI] (*Trust between Wallet and Issuer*):
 
-1. Trust in the Wallet Solution / Wallet Instance authenticity, using Wallet Attestation as client authentication; and
-2. When required, trust in the cryptographic key material and its protection properties, using Key Attestation in the Credential Request.
+1. Trust in the Wallet Solution / Wallet Instance authenticity, using the Wallet Attestation as client authentication; and
+2. When required, trust in the cryptographic key material and its protection properties, using the Key Attestation in the Credential Request.
 
 ### Wallet Attestation
 
-During the issuance phase, the Wallet Instance authenticates with the Credential Issuer's Authorization Server using Wallet Attestation as defined in Appendix E of [@!OpenID4VCI], following OAuth 2.0 Attestation-Based Client Authentication [@!I-D.ietf-oauth-attestation-based-client-auth]. The Wallet Attestation is a Client Attestation JWT issued by the Wallet Provider. The Wallet Instance MUST also present a Client Attestation Proof of Possession (PoP) JWT proving control of the key confirmed in the `cnf` claim of that attestation, as specified in [@!I-D.ietf-oauth-attestation-based-client-auth].
+During the issuance phase, the Wallet Instance authenticates with the Credential Issuer's Authorization Server using Wallet Attestation as defined in Appendix E of [@!OpenID4VCI], following OAuth 2.0 Attestation-Based Client Authentication [@!I-D.ietf-oauth-attestation-based-client-auth]. The Wallet Attestation is a Client Attestation JWT issued by the Wallet Provider. The Wallet Instance MUST also present a Client Attestation Proof of Possession (PoP) JWT proving control of the confirmation key in the `cnf` claim of that attestation, as specified in [@!I-D.ietf-oauth-attestation-based-client-auth].
 
 As described in Appendix E of [@!OpenID4VCI], the Wallet Attestation MAY be presented at the Pushed Authorization Request endpoint and/or the Token endpoint.
 
