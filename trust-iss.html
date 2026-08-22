@@ -1212,7 +1212,7 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left"></td>
 <td class="center">OpenID Federation for Wallet Architectur</td>
-<td class="right">July 2026</td>
+<td class="right">August 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">De Marco, et al.</td>
@@ -1227,7 +1227,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">OpenID Connect Working Group</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-20" class="published">20 July 2026</time>
+<time datetime="2026-08-22" class="published">22 August 2026</time>
     </dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
@@ -2130,7 +2130,7 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-federation-trust-discovery-" class="section-name selfRef">Federation Trust Discovery Use Cases</a>
       </h2>
 <p id="section-8-1">The process of trust establishment in federated environments is illustrated in this section through specific use cases involving Wallet Instances, Credential Issuers (CIs), and Credential Verifiers (CVs).<a href="#section-8-1" class="pilcrow">¶</a></p>
-<p id="section-8-2">These use cases are independent: a trust framework MAY require support for any subset of them. Normative requirements in a use case apply only when that use case is used for OpenID Federation trust establishment.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-2">These use cases are independent: a Trust Framework MAY require support for any subset of them. Normative requirements in a use case apply only when that use case is used for OpenID Federation trust establishment.<a href="#section-8-2" class="pilcrow">¶</a></p>
 <div id="establishing-trust-with-a-credential-verifier-instance">
 <section id="section-8.1">
         <h3 id="name-establishing-trust-with-a-c">
@@ -2376,22 +2376,24 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
         </h3>
 <p id="section-8.7-1">When a Credential Verifier uses OpenID Federation to establish trust in the Credential Issuer of a presented Digital Credential, the Credential Verifier MUST validate that:<a href="#section-8.7-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="compact type-1" id="section-8.7-2">
-<li id="section-8.7-2.1">the cryptographic key used to sign the Digital Credential is (or was, at the time of issuance) bound to that Credential Issuer;<a href="#section-8.7-2.1" class="pilcrow">¶</a>
+<li id="section-8.7-2.1">the cryptographic key used to sign the Digital Credential is (or was, at the time of issuance) bound to that Credential Issuer - specifically, that key is listed in the <code>jwks</code> property of the Credential Issuer's <code>openid_credential_issuer</code> metadata;<a href="#section-8.7-2.1" class="pilcrow">¶</a>
 </li>
-          <li id="section-8.7-2.2">the Credential Issuer is the Entity it claims to be; and<a href="#section-8.7-2.2" class="pilcrow">¶</a>
+          <li id="section-8.7-2.2">the Credential Issuer is the Entity it claims to be - specifically, the Issuer Identifier obtained from the Digital Credential equals the Credential Issuer's Federation Entity Identifier, and a valid Trust Chain can be constructed from that Entity to a Trust Anchor configured by the Credential Verifier, establishing that the Credential Issuer is a (direct or indirect) subordinate of a Federation Entity that the Credential Verifier trusts; and<a href="#section-8.7-2.2" class="pilcrow">¶</a>
 </li>
-          <li id="section-8.7-2.3">where required by the trust framework, the Credential Issuer is entitled to issue that Credential (for example, via Trust Marks or metadata policy evaluated over the Trust Chain).<a href="#section-8.7-2.3" class="pilcrow">¶</a>
+          <li id="section-8.7-2.3">where required by the Trust Framework, the Credential Issuer is entitled to issue that Credential (for example, via Trust Marks or metadata policy evaluated over the Trust Chain).<a href="#section-8.7-2.3" class="pilcrow">¶</a>
 </li>
         </ol>
-<p id="section-8.7-3">This use case applies only when OpenID Federation is the trust mechanism used for that verification. An <code>https</code> issuer identifier in a Digital Credential does not by itself imply that the Credential Issuer participates in an OpenID Federation; other key-resolution mechanisms (for example, those defined by SD-JWT VC) MAY apply outside this use case.<a href="#section-8.7-3" class="pilcrow">¶</a></p>
+<p id="section-8.7-3">This use case applies only when OpenID Federation is the trust mechanism used for that verification. An <code>https</code> Issuer Identifier in a Digital Credential does not by itself imply that the Credential Issuer participates in an OpenID Federation; other key-resolution mechanisms (for example, those defined by SD-JWT VC) MAY apply outside this use case.<a href="#section-8.7-3" class="pilcrow">¶</a></p>
 <div id="obtaining-the-credential-issuer-entity-identifier">
 <section id="section-8.7.1">
           <h4 id="name-obtaining-the-credential-is">
 <a href="#section-8.7.1" class="section-number selfRef">8.7.1. </a><a href="#name-obtaining-the-credential-is" class="section-name selfRef">Obtaining the Credential Issuer Entity Identifier</a>
           </h4>
 <p id="section-8.7.1-1">OpenID Federation Entity Identifiers MUST be <code>https</code> URLs, as defined in <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>.<a href="#section-8.7.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.7.1-2">When this use case applies and the Credential Issuer is identified in the Digital Credential by an <code>https</code> URL (for example, the <code>iss</code> claim in an SD-JWT VC or JWT-secured Credential, or the <code>issuer</code> / <code>issuer.id</code> value in a W3C Verifiable Credential), that URL MUST be used as the Credential Issuer's Federation Entity Identifier. That Entity Identifier MUST equal the <code>credential_issuer</code> metadata value and the <code>iss</code>/<code>sub</code> pair of the Credential Issuer's Entity Configuration, as profiled in the OpenID Credential Issuer Metadata Parameters section of this specification.<a href="#section-8.7.1-2" class="pilcrow">¶</a></p>
-<p id="section-8.7.1-3">Alternative issuer identifiers that are not <code>https</code> URLs (for example, DIDs), and format-specific bindings such as ISO mDOC X.509 certificate chains, are out of scope for this version of the specification.<a href="#section-8.7.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.7.1-2">When this use case applies, the Credential Issuer's Federation Entity Identifier is the OpenID4VCI Credential Issuer Identifier (<code>credential_issuer</code> metadata). That Entity Identifier MUST equal the <code>iss</code>/<code>sub</code> pair of the Credential Issuer's Entity Configuration, as profiled in the OpenID Credential Issuer Metadata Parameters section of this specification.<a href="#section-8.7.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.7.1-3">When the Digital Credential identifies the Credential Issuer with an <code>https</code> URL that is that Credential Issuer Identifier (for example, the <code>iss</code> claim in an SD-JWT VC or JWT-secured Credential), that URL MUST be used as the Federation Entity Identifier.<a href="#section-8.7.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.7.1-4">Some credential formats also carry an organizational issuer identifier that MAY differ from the Credential Issuer Identifier (for example, a W3C Verifiable Credential whose <code>issuer</code> / <code>issuer.id</code> names an institution, while <code>iss</code> or the OpenID4VCI <code>credential_issuer</code> names the technical issuance service). In that case, the Federation Entity Identifier MUST be the Credential Issuer Identifier, not the distinct organizational identifier. Establishing federation trust in the organizational issuer as a separate Entity is out of scope for this use case.<a href="#section-8.7.1-4" class="pilcrow">¶</a></p>
+<p id="section-8.7.1-5">Alternative Issuer Identifiers that are not <code>https</code> URLs (for example, DIDs), and format-specific bindings such as ISO mDOC X.509 certificate chains, are out of scope for this version of the specification. Extensions MAY define how to use DIDs as Leaf Entity Identifiers; that is out of scope for this specification, which defines how Federation Wallets use OpenID Federation 1.0 together with the OpenID4VC specifications.<a href="#section-8.7.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="federation-entity-discovery-and-credential-validation">
@@ -2409,7 +2411,7 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
 </li>
             <li id="section-8.7.2-2.4">Apply metadata policies and obtain the Credential Issuer's final metadata, including cryptographic keys used to verify issued Credentials (for example, keys in <code>openid_credential_issuer</code> <code>jwks</code>).<a href="#section-8.7.2-2.4" class="pilcrow">¶</a>
 </li>
-            <li id="section-8.7.2-2.5">Verify the presented Digital Credential using that validated key material, and evaluate any Trust Marks or policies required by the trust framework for issuance entitlement.<a href="#section-8.7.2-2.5" class="pilcrow">¶</a>
+            <li id="section-8.7.2-2.5">Verify the presented Digital Credential using that validated key material, and evaluate any Trust Marks or policies required by the Trust Framework for issuance entitlement.<a href="#section-8.7.2-2.5" class="pilcrow">¶</a>
 </li>
           </ol>
 <p id="section-8.7.2-3">Alternatively, when the presented Digital Credential includes the <code>trust_chain</code> JOSE header parameter defined in Section 4.3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>, the Credential Verifier MAY validate that Trust Chain offline as described in the Implementation Considerations for Offline Flows section, without performing real-time Federation Entity Discovery. The Credential Verifier MUST still validate the Trust Chain using a configured Trust Anchor's public keys and MUST verify the Digital Credential using key material consistent with the validated chain.<a href="#section-8.7.2-3" class="pilcrow">¶</a></p>
@@ -2645,13 +2647,20 @@ Niels van Dijk.<a href="#section-12-1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="appendix-B-3.1">Added Federation Trust Discovery use case "Credential Verifiers
  Establishing Trust in Credential Issuers" to resolve
- federation-wallet issue #48: map https issuer identifiers in
+ federation-wallet issue #48: map https Issuer Identifiers in
  presented Credentials to Federation Entity Identifiers, perform
  Federation Entity Discovery (or validate an offline <code>trust_chain</code>),
  and verify Credentials with keys from the validated Trust Chain.
- DIDs and ISO mDOC X.509 bindings remain out of scope for this
- version. Clarified that Trust Discovery use cases are independently
- adoptable by trust frameworks.<a href="#appendix-B-3.1" class="pilcrow">¶</a>
+ Specified that key binding is verified against
+ <code>openid_credential_issuer</code> <code>jwks</code>, and that issuer identity is
+ established by matching the Issuer Identifier to the Federation
+ Entity Identifier and validating a Trust Chain to a configured
+ Trust Anchor. Clarified that W3C VC <code>issuer</code> / <code>issuer.id</code> is not
+ used as the Federation Entity Identifier when it differs from the
+ OpenID4VCI Credential Issuer Identifier. DIDs and ISO mDOC X.509
+ bindings remain out of scope for this version; extensions MAY
+ define DID Leaf Entities. Clarified that Trust Discovery use cases
+ are independently adoptable by Trust Frameworks.<a href="#appendix-B-3.1" class="pilcrow">¶</a>
 </li>
       </ul>
 <p id="appendix-B-4">-05<a href="#appendix-B-4" class="pilcrow">¶</a></p>
