@@ -1,5 +1,5 @@
 %%%
-title = "OpenID Federation for Wallet Architectures 1.0 - draft 05"
+title = "OpenID Federation for Wallet Architectures 1.0 - draft 06"
 abbrev = "OpenID Federation for Wallet Architectures"
 ipr = "none"
 workgroup = "OpenID Connect Working Group"
@@ -455,6 +455,26 @@ When these parameters are expressed and enforced through Subordinate
 Statements, as defined in [@!OpenID.Federation], critical configuration and
 authorization decisions move from ad‑hoc, per‑instance configuration into a
 federated, policy-driven framework anchored in the Trust Anchor and the Superior Entities.
+
+### OpenID Federation Client IDs Used with OpenID for Verifiable Presentations
+
+Note that Section 5.9.3 of [@!OpenID4VP] defines that the Client ID values
+specified by Section 12.1 of [@!OpenID.Federation], which are Entity Identifiers,
+MUST be prefixed by `openid_federation:` when used with [@!OpenID4VP].
+Therefore, such Client IDs MUST be prefixed when used with
+[@!OpenID4VP] protocols and APIs
+and the prefix MUST be removed from any Client IDs received from
+[@!OpenID4VP] protocols and APIs
+when applying the processing rules in OpenID Federation 1.0 and this specification.
+For example, the prefix MUST be included in
+the `client_id` values in the Authorization Requests defined in
+Section 5 of [@!OpenID4VP],
+the `client_id` values in the key-bound attestations defined in
+Section 5.11.1 of [@!OpenID4VP], and
+the `aud` values in the Presentation Responses defined in
+Appendix B of [@!OpenID4VP].
+Together, these rules enable compliance with
+Section 14.8 of [@!OpenID4VP] (Always Use the Full Client Identifier).
 
 # Federation Policies
 
@@ -1065,6 +1085,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -06
+
+   * Added note on prefixing Client ID values used with OpenID4VP.
 
    -05
 
