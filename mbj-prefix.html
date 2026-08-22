@@ -1227,7 +1227,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">OpenID Connect Working Group</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-08-15" class="published">15 August 2026</time>
+<time datetime="2026-08-22" class="published">22 August 2026</time>
     </dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
@@ -1358,6 +1358,14 @@ digital wallet architectures.<a href="#section-abstract-1" class="pilcrow">¶</a
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5">
                 <p id="section-toc.1-1.8.2.5.1"><a href="#section-8.5" class="auto internal xref">8.5</a>.  <a href="#name-credential-issuers-establish" class="internal xref">Credential Issuers Establishing Trust in the Wallet</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5.2.1">
+                    <p id="section-toc.1-1.8.2.5.2.1.1"><a href="#section-8.5.1" class="auto internal xref">8.5.1</a>.  <a href="#name-wallet-attestation" class="internal xref">Wallet Attestation</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5.2.2">
+                    <p id="section-toc.1-1.8.2.5.2.2.1"><a href="#section-8.5.2" class="auto internal xref">8.5.2</a>.  <a href="#name-key-attestation" class="internal xref">Key Attestation</a></p>
+</li>
+                </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.6">
                 <p id="section-toc.1-1.8.2.6.1"><a href="#section-8.6" class="auto internal xref">8.6</a>.  <a href="#name-wallet-establishing-trust-i" class="internal xref">Wallet Establishing Trust in the Credential Verifier</a></p>
@@ -1464,8 +1472,9 @@ general-purpose wallet specifications to define those new parameters there.<a hr
 "End-User" and "Entity" as defined by OpenID Connect <span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>,
 "JSON Web Token (JWT)" defined by JSON Web Token (JWT) <span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span>,
 "Client" as defined by <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>,
-"Verifiable Presentation" and "Wallet Attestation" defined in <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span>,
-"Holder" and "Credential Issuer" defined in <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>,
+"Verifiable Presentation" defined in <span>[<a href="#OpenID4VP" class="cite xref">OpenID4VP</a>]</span>,
+"Holder", "Credential Issuer", "Wallet Attestation", and "Key Attestation"
+defined in <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>,
 and "Trust Mark", "Federation Entity", "Trust Anchor",
 "Intermediate", and "Subordinate Statement" defined in <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <p id="section-3-2">This specification also defines the following terms:<a href="#section-3-2" class="pilcrow">¶</a></p>
@@ -2295,8 +2304,9 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
         <h3 id="name-credential-issuers-establis">
 <a href="#section-8.4" class="section-number selfRef">8.4. </a><a href="#name-credential-issuers-establis" class="section-name selfRef">Credential Issuers Establishing Trust in the Wallet Provider</a>
         </h3>
-<p id="section-8.4-1">The evaluation of trust by the Credential Issuer towards the Wallet Provider is conducted exactly as other federation entities. This process can be achieved through Federation Entity Discovery, where the Trust Chain is constructed starting from the Entity Configuration of the Wallet Provider. The Credential Issuer retrieves the Entity Configuration of the Wallet Provider and follows the <code>authority_hints</code> to build the Trust Chain in the usual manner.<a href="#section-8.4-1" class="pilcrow">¶</a></p>
-<p id="section-8.4-2">Alternatively, trust can be established via a signed data object issued by Wallet Provider, which includes the <code>trust_chain</code> parameter, as defined in Section 4.3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>. This parameter contains a pre-constructed and verifiable Trust Chain, which MUST be validated using one of the the public keys of the Trust Anchor. This method allows for a streamlined trust evaluation process, as the Trust Chain is provided directly by the Wallet Provider and can be quickly validated.<a href="#section-8.4-2" class="pilcrow">¶</a></p>
+<p id="section-8.4-1">The evaluation of trust by the Credential Issuer towards the Wallet Provider is conducted exactly as for other Federation Entities. This process can be achieved through Federation Entity Discovery, where the Trust Chain is constructed starting from the Entity Configuration of the Wallet Provider. The Credential Issuer retrieves the Entity Configuration of the Wallet Provider and follows the <code>authority_hints</code> to build the Trust Chain in the usual manner.<a href="#section-8.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.4-2">Alternatively, trust can be established via a signed data object issued by the Wallet Provider that includes the <code>trust_chain</code> JOSE header parameter, as defined in Section 4.3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>. This parameter contains a pre-constructed and verifiable Trust Chain, which MUST be validated using one of the public keys of the Trust Anchor. This method allows for a streamlined trust evaluation process, as the Trust Chain is provided directly by the Wallet Provider and can be quickly validated.<a href="#section-8.4-2" class="pilcrow">¶</a></p>
+<p id="section-8.4-3">When a Wallet Attestation or Key Attestation includes a <code>trust_chain</code> header parameter, the Credential Issuer MUST validate that Trust Chain as specified in <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span> and in the Implementation Considerations for Offline Flows section of this specification. The Wallet Provider Entity Type used in that Trust Chain is <code>openid_wallet_provider</code> (see Table 1).<a href="#section-8.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="credential-issuers-establishing-trust-in-the-wallet">
@@ -2304,10 +2314,42 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
         <h3 id="name-credential-issuers-establish">
 <a href="#section-8.5" class="section-number selfRef">8.5. </a><a href="#name-credential-issuers-establish" class="section-name selfRef">Credential Issuers Establishing Trust in the Wallet</a>
         </h3>
-<p id="section-8.5-1">During the issuance phase, the Wallet Instance authenticates with the Credential Issuer using a Client authentication mechanism that includes a proof issued by its Wallet Provider.<a href="#section-8.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.5-2">This proof is a signed data object that confirms the match of a Wallet Instance to a Wallet Solution, as attested by the Wallet Provider. This proof contains all the information the Credential Issuer requires regarding the security and compliance of the Wallet Instance and the cryptographic proof of possession of this attestation provided by the Wallet Instance presenting it.<a href="#section-8.5-2" class="pilcrow">¶</a></p>
-<p id="section-8.5-3">To establish trust with the Wallet Instance, the Credential Issuer MUST first establish trust with the Wallet Provider that is the issuer of the verifiable attestation, as described in the previous section.<a href="#section-8.5-3" class="pilcrow">¶</a></p>
-<p id="section-8.5-4">The verifiable attestation issued by the Wallet Provider to the Wallet Instance MUST be cryptographically validated using the cryptographic material provided by the federation Trust Chain. The Credential Issuer evaluates the adequacy of these verifiable attestations using mechanisms and rules that might depend upon different regulations and frameworks that are out of the scope of this specification.<a href="#section-8.5-4" class="pilcrow">¶</a></p>
+<p id="section-8.5-1">During Credential issuance, establishing trust in the Wallet comprises two related but distinct evaluations, as described in Section 13.3 of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span> (<em>Trust between Wallet and Issuer</em>):<a href="#section-8.5-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-8.5-2">
+<li id="section-8.5-2.1">Trust in the Wallet Solution / Wallet Instance authenticity, using the Wallet Attestation as client authentication; and<a href="#section-8.5-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-8.5-2.2">When required, trust in the cryptographic key material and its protection properties, using the Key Attestation in the Credential Request.<a href="#section-8.5-2.2" class="pilcrow">¶</a>
+</li>
+        </ol>
+<div id="wallet-attestation">
+<section id="section-8.5.1">
+          <h4 id="name-wallet-attestation">
+<a href="#section-8.5.1" class="section-number selfRef">8.5.1. </a><a href="#name-wallet-attestation" class="section-name selfRef">Wallet Attestation</a>
+          </h4>
+<p id="section-8.5.1-1">During the issuance phase, the Wallet Instance authenticates with the Credential Issuer's Authorization Server using Wallet Attestation as defined in Appendix E of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>, following OAuth 2.0 Attestation-Based Client Authentication <span>[<a href="#I-D.ietf-oauth-attestation-based-client-auth" class="cite xref">I-D.ietf-oauth-attestation-based-client-auth</a>]</span>. The Wallet Attestation is a Client Attestation JWT issued by the Wallet Provider. The Wallet Instance MUST also present a Client Attestation Proof of Possession (PoP) JWT proving control of the confirmation key in the <code>cnf</code> claim of that attestation, as specified in <span>[<a href="#I-D.ietf-oauth-attestation-based-client-auth" class="cite xref">I-D.ietf-oauth-attestation-based-client-auth</a>]</span>.<a href="#section-8.5.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.5.1-2">As described in Appendix E of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>, the Wallet Attestation MAY be presented at the Pushed Authorization Request endpoint and/or the Token endpoint.<a href="#section-8.5.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.5.1-3">To establish trust with the Wallet Instance, the Credential Issuer MUST first establish trust with the Wallet Provider that issued the Wallet Attestation, as described in the previous section. The Credential Issuer MUST cryptographically validate the Wallet Attestation using the cryptographic material obtained from that federation Trust Chain (for example, Federation Entity Keys or keys in the Wallet Provider's Entity Configuration). The Credential Issuer MUST also validate the Client Attestation PoP JWT against the key in the <code>cnf</code> claim of the Wallet Attestation, as specified in <span>[<a href="#I-D.ietf-oauth-attestation-based-client-auth" class="cite xref">I-D.ietf-oauth-attestation-based-client-auth</a>]</span>.<a href="#section-8.5.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.5.1-4">When used in a Wallet federation, Wallet Attestation JWTs SHOULD include the <code>trust_chain</code> JOSE header parameter defined in Section 4.3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>, so that the Credential Issuer can validate the Wallet Provider without performing real-time Federation Entity Discovery. See also the Implementation Considerations for Offline Flows section.<a href="#section-8.5.1-4" class="pilcrow">¶</a></p>
+<p id="section-8.5.1-5">The Credential Issuer evaluates the adequacy of Wallet Attestation claims (for example, against Trust Marks, metadata policies, or ecosystem-specific assurance requirements) using mechanisms and rules that might depend upon different regulations and frameworks and that are out of the scope of this specification. Privacy considerations for the Wallet Attestation <code>sub</code> claim in <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span> Section 15.4.4 apply.<a href="#section-8.5.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="key-attestation">
+<section id="section-8.5.2">
+          <h4 id="name-key-attestation">
+<a href="#section-8.5.2" class="section-number selfRef">8.5.2. </a><a href="#name-key-attestation" class="section-name selfRef">Key Attestation</a>
+          </h4>
+<p id="section-8.5.2-1">Separately from Wallet Attestation used for client authentication, a Credential Issuer MAY require assurance about the properties of the cryptographic keys to which issued Credentials will be bound. In that case, the Wallet MUST supply a Key Attestation as defined in Appendix D of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>.<a href="#section-8.5.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.5.2-2">Key Attestations are conveyed in the Credential Request as specified in Section 8.2 and Appendix F of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>:<a href="#section-8.5.2-2" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-8.5.2-3.1">using the <code>jwt</code> proof type with a <code>key_attestation</code> JOSE header parameter; and/or<a href="#section-8.5.2-3.1" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-8.5.2-3.2">using the <code>attestation</code> proof type.<a href="#section-8.5.2-3.2" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-8.5.2-4">The Credential Issuer advertises Key Attestation requirements using the <code>proof_types_supported</code> and <code>key_attestations_required</code> parameters in Credential Issuer metadata, as defined in Section 12.2.4 of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>. A Key Attestation MAY convey the public key and trust mechanism of its signer using <code>x5c</code>, <code>kid</code>, or <code>trust_chain</code>, as specified in Appendix D.1 of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>. When <code>trust_chain</code> is used, the Credential Issuer MUST validate it as described for Wallet Providers above.<a href="#section-8.5.2-4" class="pilcrow">¶</a></p>
+<p id="section-8.5.2-5">As with Wallet Attestations, whether particular <code>key_storage</code>, <code>user_authentication</code>, or other Key Attestation claims are adequate for a given Credential is determined by the applicable trust framework and is out of the scope of this specification.<a href="#section-8.5.2-5" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="wallet-establishing-trust-in-the-credential-verifier">
@@ -2394,11 +2436,13 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
 <p id="section-9-1">The static Trust Chain parameter within the JWT headers, as defined in Section 4.3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>, is used as a hint to the Entity involved in a transaction with a common Trust Anchor. This facilitates trust evaluation without the need for real-time Federation Entity Discovery using Federation API endpoints.<a href="#section-9-1" class="pilcrow">¶</a></p>
 <p id="section-9-2">The Entity that issues a signed data object, including the <code>trust_chain</code> parameter, might be:<a href="#section-9-2" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-9-3.1">Wallet Providers in signed Wallet Attestations. The Wallet Instance obtains one or more Wallet Attestations from its Wallet Provider, each of them including a Trust Chain related to each Trust Anchor the Wallet Provider trusts;<a href="#section-9-3.1" class="pilcrow">¶</a>
+<li class="compact" id="section-9-3.1">Wallet Providers in signed Wallet Attestations (Appendix E of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>). The Wallet Instance obtains one or more Wallet Attestations from its Wallet Provider; each Wallet Attestation SHOULD include a <code>trust_chain</code> JOSE header parameter related to a Trust Anchor the Wallet Provider trusts, as defined in Section 4.3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>;<a href="#section-9-3.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-9-3.2">Credential Verifiers in signed request objects. The Wallet Instance obtains a presentation request that includes a Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the information obtained in the <code>wallet_metadata</code> parameter provided by the Wallet using the Request URI POST;<a href="#section-9-3.2" class="pilcrow">¶</a>
+        <li class="compact" id="section-9-3.2">Wallet Providers or key storage components in signed Key Attestations (Appendix D of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>). A Key Attestation MAY include a <code>trust_chain</code> JOSE header parameter as specified in Appendix D.1 and Appendix F.1 of <span>[<a href="#OpenID4VCI" class="cite xref">OpenID4VCI</a>]</span>;<a href="#section-9-3.2" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-9-3.3">A Credential Issuer in a signed Digital Credential. The Wallet Instance obtains a Digital Credential from its Credential Issuer, which includes the Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the Wallet Attestation used during the Issuance.<a href="#section-9-3.3" class="pilcrow">¶</a>
+        <li class="compact" id="section-9-3.3">Credential Verifiers in signed request objects. The Wallet Instance obtains a presentation request that includes a Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the information obtained in the <code>wallet_metadata</code> parameter provided by the Wallet using the Request URI POST;<a href="#section-9-3.3" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-9-3.4">A Credential Issuer in a signed Digital Credential. The Wallet Instance obtains a Digital Credential from its Credential Issuer, which includes the Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the Wallet Attestation used during the Issuance.<a href="#section-9-3.4" class="pilcrow">¶</a>
 </li>
       </ul>
 <p id="section-9-4">The Entity that receives the data object including the JWT <code>trust_chain</code>, such as the Wallet Instance obtaining a signed request object, verifies the Trust Chain using the Trust Anchor's public keys and applies any metadata policies, without needing to have a working network connection for reaching the Federation API.<a href="#section-9-4" class="pilcrow">¶</a></p>
@@ -2468,6 +2512,10 @@ Niels van Dijk.<a href="#section-12-1" class="pilcrow">¶</a></p>
 <a href="#section-13" class="section-number selfRef">13. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
+<dt id="I-D.ietf-oauth-attestation-based-client-auth">[I-D.ietf-oauth-attestation-based-client-auth]</dt>
+      <dd>
+<span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Bastian, P.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"OAuth 2.0 Attestation-Based Client Authentication"</span>, <time datetime="2026-07-06" class="refDate">6 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-attestation-based-client-auth">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-attestation-based-client-auth</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="I-D.ietf-oauth-status-list">[I-D.ietf-oauth-status-list]</dt>
       <dd>
 <span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Bastian, P.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"Token Status List (TSL)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-status-list-21</span>, <time datetime="2026-06-21" class="refDate">21 June 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-21">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-21</a>&gt;</span>. </dd>
@@ -2560,37 +2608,56 @@ Niels van Dijk.<a href="#section-12-1" class="pilcrow">¶</a></p>
       </ul>
 <p id="appendix-B-4">-05<a href="#appendix-B-4" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="appendix-B-5.1">Added subsection "OpenID Credential Issuer Metadata Parameters" under OpenID Credential Issuer Entity Type, profiling <code>openid_credential_issuer</code> metadata when used in Wallet federations.<a href="#appendix-B-5.1" class="pilcrow">¶</a>
+<li class="compact" id="appendix-B-5.1">Clarified Credential Issuers Establishing Trust in the Wallet
+ Provider and Credential Issuers Establishing Trust in the Wallet
+ to resolve federation-wallet issue #29, with normative references
+ to OpenID4VCI Wallet Attestation (Appendix E), Key Attestation
+ (Appendix D), proof types (Appendix F), Credential Request
+ (Section 8.2), Credential Issuer metadata (Section 12.2.4), and
+ Trust between Wallet and Issuer (Section 13.3), plus OAuth 2.0
+ Attestation-Based Client Authentication.<a href="#appendix-B-5.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-5.2">Documented <code>credential_issuer</code>, <code>authorization_servers</code>, and the OpenID4VCI parameters (credential_endpoint, nonce_endpoint, display, credential_configurations_supported, etc.) as carried in Federation metadata/metadata_policy.<a href="#appendix-B-5.2" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.2">Distinguished Wallet Attestation (client authentication at PAR /
+ Token endpoints) from Key Attestation (Credential Request proofs).<a href="#appendix-B-5.2" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-5.3">Added <code>jwks</code>: scope for signature of responses, tokens, and issued credentials; requirement that public keys used to verify signed Credential Issuer metadata (e.g. at .well-known/openid-credential-issuer per OpenID4VCI 12.2.3) be provided in <code>openid_credential_issuer</code> jwks when trust frameworks require it.<a href="#appendix-B-5.3" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.3">Profiled use of the OpenID Federation <code>trust_chain</code> JOSE header on
+ Wallet Attestations and Key Attestations for offline trust
+ evaluation.<a href="#appendix-B-5.3" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-5.4">Extended OpenID Credential Verifier entity type with additional metadata
+        <li class="compact" id="appendix-B-5.4">Corrected Terminology so Wallet Attestation and Key Attestation are
+ cited from OpenID4VCI rather than OpenID4VP.<a href="#appendix-B-5.4" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-5.5">Added subsection "OpenID Credential Issuer Metadata Parameters" under OpenID Credential Issuer Entity Type, profiling <code>openid_credential_issuer</code> metadata when used in Wallet federations.<a href="#appendix-B-5.5" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-5.6">Documented <code>credential_issuer</code>, <code>authorization_servers</code>, and the OpenID4VCI parameters (credential_endpoint, nonce_endpoint, display, credential_configurations_supported, etc.) as carried in Federation metadata/metadata_policy.<a href="#appendix-B-5.6" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-5.7">Added <code>jwks</code>: scope for signature of responses, tokens, and issued credentials; requirement that public keys used to verify signed Credential Issuer metadata (e.g. at .well-known/openid-credential-issuer per OpenID4VCI 12.2.3) be provided in <code>openid_credential_issuer</code> jwks when trust frameworks require it.<a href="#appendix-B-5.7" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-5.8">Extended OpenID Credential Verifier entity type with additional metadata
  parameters: jwks, request_uris, response_uris, redirect_uris, and
  dcql_queries, with definitions and rationale aligned to the Trusted
- Third-Party trust model.<a href="#appendix-B-5.4" class="pilcrow">¶</a>
+ Third-Party trust model.<a href="#appendix-B-5.8" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-5.5">Specified that when a Credential Verifier participates in a federation,
+        <li class="compact" id="appendix-B-5.9">Specified that when a Credential Verifier participates in a federation,
  Wallets MUST use jwks from federation metadata and MUST ignore jwks
- from client_metadata in the Authorization Request.<a href="#appendix-B-5.5" class="pilcrow">¶</a>
+ from client_metadata in the Authorization Request.<a href="#appendix-B-5.9" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-5.6">Added section on using openid_credential_verifier metadata and
+        <li class="compact" id="appendix-B-5.10">Added section on using openid_credential_verifier metadata and
  metadata_policy in Subordinate Statements for policy enforcement by
- superior entities (endpoints, keys, dcql_queries).<a href="#appendix-B-5.6" class="pilcrow">¶</a>
+ superior entities (endpoints, keys, dcql_queries).<a href="#appendix-B-5.10" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-5.7">Clarified dcql_queries override rules: metadata in a Subordinate
+        <li class="compact" id="appendix-B-5.11">Clarified dcql_queries override rules: metadata in a Subordinate
  Statement overrides request/client_metadata; metadata_policy applies to
  verifier metadata or, if absent, to client_metadata; profiles MAY use
- Trust Marks to convey dcql_queries-related policies.<a href="#appendix-B-5.7" class="pilcrow">¶</a>
+ Trust Marks to convey dcql_queries-related policies.<a href="#appendix-B-5.11" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-5.8">Defined dcql_queries as a non-empty array of DCQL query objects (as in
+        <li class="compact" id="appendix-B-5.12">Defined dcql_queries as a non-empty array of DCQL query objects (as in
  OpenID4VP) so verifiers can publish multiple authorized queries for
- different situations.<a href="#appendix-B-5.8" class="pilcrow">¶</a>
+ different situations.<a href="#appendix-B-5.12" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-5.9">Added IANA Considerations registering the dcql_queries parameter.<a href="#appendix-B-5.9" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.13">Added IANA Considerations registering the dcql_queries parameter.<a href="#appendix-B-5.13" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-5.10">Added Security Considerations.<a href="#appendix-B-5.10" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.14">Added Security Considerations.<a href="#appendix-B-5.14" class="pilcrow">¶</a>
 </li>
       </ul>
 <p id="appendix-B-6">-04<a href="#appendix-B-6" class="pilcrow">¶</a></p>
