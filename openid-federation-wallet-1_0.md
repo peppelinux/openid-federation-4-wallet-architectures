@@ -99,8 +99,9 @@ This specification uses the terms
 "End-User" and "Entity" as defined by OpenID Connect [@!OpenID.Core],
 "JSON Web Token (JWT)" defined by JSON Web Token (JWT) [@!RFC7519],
 "Client" as defined by [@!RFC6749],
-"Verifiable Presentation" and "Wallet Attestation" defined in [@!OpenID4VP],
-"Holder" and "Credential Issuer" defined in [@!OpenID4VCI],
+"Verifiable Presentation" defined in [@!OpenID4VP],
+"Holder", "Credential Issuer", "Wallet Attestation", and "Key Attestation"
+defined in [@!OpenID4VCI],
 and "Trust Mark", "Federation Entity", "Trust Anchor",
 "Intermediate", and "Subordinate Statement" defined in [@!OpenID.Federation].
 
@@ -761,19 +762,43 @@ The diagram below illustrates how a Wallet establishes trust with a Credential I
 
 ## Credential Issuers Establishing Trust in the Wallet Provider
 
-The evaluation of trust by the Credential Issuer towards the Wallet Provider is conducted exactly as other federation entities. This process can be achieved through Federation Entity Discovery, where the Trust Chain is constructed starting from the Entity Configuration of the Wallet Provider. The Credential Issuer retrieves the Entity Configuration of the Wallet Provider and follows the `authority_hints` to build the Trust Chain in the usual manner. 
+The evaluation of trust by the Credential Issuer towards the Wallet Provider is conducted exactly as for other Federation Entities. This process can be achieved through Federation Entity Discovery, where the Trust Chain is constructed starting from the Entity Configuration of the Wallet Provider. The Credential Issuer retrieves the Entity Configuration of the Wallet Provider and follows the `authority_hints` to build the Trust Chain in the usual manner.
 
-Alternatively, trust can be established via a signed data object issued by Wallet Provider, which includes the `trust_chain` parameter, as defined in Section 4.3 of [@!OpenID.Federation]. This parameter contains a pre-constructed and verifiable Trust Chain, which MUST be validated using one of the the public keys of the Trust Anchor. This method allows for a streamlined trust evaluation process, as the Trust Chain is provided directly by the Wallet Provider and can be quickly validated.
+Alternatively, trust can be established via a signed data object issued by the Wallet Provider that includes the `trust_chain` JOSE header parameter, as defined in Section 4.3 of [@!OpenID.Federation]. This parameter contains a pre-constructed and verifiable Trust Chain, which MUST be validated using one of the public keys of the Trust Anchor. This method allows for a streamlined trust evaluation process, as the Trust Chain is provided directly by the Wallet Provider and can be quickly validated.
+
+When a Wallet Attestation or Key Attestation includes a `trust_chain` header parameter, the Credential Issuer MUST validate that Trust Chain as specified in [@!OpenID.Federation] and in the Implementation Considerations for Offline Flows section of this specification. The Wallet Provider Entity Type used in that Trust Chain is `openid_wallet_provider` (see Table 1).
 
 ## Credential Issuers Establishing Trust in the Wallet
 
-During the issuance phase, the Wallet Instance authenticates with the Credential Issuer using a Client authentication mechanism that includes a proof issued by its Wallet Provider. 
+During Credential issuance, establishing trust in the Wallet comprises two related but distinct evaluations, as described in Section 13.3 of [@!OpenID4VCI] (*Trust between Wallet and Issuer*):
 
-This proof is a signed data object that confirms the match of a Wallet Instance to a Wallet Solution, as attested by the Wallet Provider. This proof contains all the information the Credential Issuer requires regarding the security and compliance of the Wallet Instance and the cryptographic proof of possession of this attestation provided by the Wallet Instance presenting it.
+1. Trust in the Wallet Solution / Wallet Instance authenticity, using the Wallet Attestation as client authentication; and
+2. When required, trust in the cryptographic key material and its protection properties, using the Key Attestation in the Credential Request.
 
-To establish trust with the Wallet Instance, the Credential Issuer MUST first establish trust with the Wallet Provider that is the issuer of the verifiable attestation, as described in the previous section.
+### Wallet Attestation
 
-The verifiable attestation issued by the Wallet Provider to the Wallet Instance MUST be cryptographically validated using the cryptographic material provided by the federation Trust Chain. The Credential Issuer evaluates the adequacy of these verifiable attestations using mechanisms and rules that might depend upon different regulations and frameworks that are out of the scope of this specification.
+During the issuance phase, the Wallet Instance authenticates with the Credential Issuer's Authorization Server using Wallet Attestation as defined in Appendix E of [@!OpenID4VCI], following OAuth 2.0 Attestation-Based Client Authentication [@!I-D.ietf-oauth-attestation-based-client-auth]. The Wallet Attestation is a Client Attestation JWT issued by the Wallet Provider. The Wallet Instance MUST also present a Client Attestation Proof of Possession (PoP) JWT proving control of the confirmation key in the `cnf` claim of that attestation, as specified in [@!I-D.ietf-oauth-attestation-based-client-auth].
+
+As described in Appendix E of [@!OpenID4VCI], the Wallet Attestation MAY be presented at the Pushed Authorization Request endpoint and/or the Token endpoint.
+
+To establish trust with the Wallet Instance, the Credential Issuer MUST first establish trust with the Wallet Provider that issued the Wallet Attestation, as described in the previous section. The Credential Issuer MUST cryptographically validate the Wallet Attestation using the cryptographic material obtained from that federation Trust Chain (for example, Federation Entity Keys or keys in the Wallet Provider's Entity Configuration). The Credential Issuer MUST also validate the Client Attestation PoP JWT against the key in the `cnf` claim of the Wallet Attestation, as specified in [@!I-D.ietf-oauth-attestation-based-client-auth].
+
+When used in a Wallet federation, Wallet Attestation JWTs SHOULD include the `trust_chain` JOSE header parameter defined in Section 4.3 of [@!OpenID.Federation], so that the Credential Issuer can validate the Wallet Provider without performing real-time Federation Entity Discovery. See also the Implementation Considerations for Offline Flows section.
+
+The Credential Issuer evaluates the adequacy of Wallet Attestation claims (for example, against Trust Marks, metadata policies, or ecosystem-specific assurance requirements) using mechanisms and rules that might depend upon different regulations and frameworks and that are out of the scope of this specification. Privacy considerations for the Wallet Attestation `sub` claim in [@!OpenID4VCI] Section 15.4.4 apply.
+
+### Key Attestation
+
+Separately from Wallet Attestation used for client authentication, a Credential Issuer MAY require assurance about the properties of the cryptographic keys to which issued Credentials will be bound. In that case, the Wallet MUST supply a Key Attestation as defined in Appendix D of [@!OpenID4VCI].
+
+Key Attestations are conveyed in the Credential Request as specified in Section 8.2 and Appendix F of [@!OpenID4VCI]:
+
+- using the `jwt` proof type with a `key_attestation` JOSE header parameter; and/or
+- using the `attestation` proof type.
+
+The Credential Issuer advertises Key Attestation requirements using the `proof_types_supported` and `key_attestations_required` parameters in Credential Issuer metadata, as defined in Section 12.2.4 of [@!OpenID4VCI]. A Key Attestation MAY convey the public key and trust mechanism of its signer using `x5c`, `kid`, or `trust_chain`, as specified in Appendix D.1 of [@!OpenID4VCI]. When `trust_chain` is used, the Credential Issuer MUST validate it as described for Wallet Providers above.
+
+As with Wallet Attestations, whether particular `key_storage`, `user_authentication`, or other Key Attestation claims are adequate for a given Credential is determined by the applicable trust framework and is out of the scope of this specification.
 
 ## Wallet Establishing Trust in the Credential Verifier
 
@@ -852,7 +877,8 @@ The static Trust Chain parameter within the JWT headers, as defined in Section 4
 
 The Entity that issues a signed data object, including the `trust_chain` parameter, might be:
 
-- Wallet Providers in signed Wallet Attestations. The Wallet Instance obtains one or more Wallet Attestations from its Wallet Provider, each of them including a Trust Chain related to each Trust Anchor the Wallet Provider trusts;
+- Wallet Providers in signed Wallet Attestations (Appendix E of [@!OpenID4VCI]). The Wallet Instance obtains one or more Wallet Attestations from its Wallet Provider; each Wallet Attestation SHOULD include a `trust_chain` JOSE header parameter related to a Trust Anchor the Wallet Provider trusts, as defined in Section 4.3 of [@!OpenID.Federation];
+- Wallet Providers or key storage components in signed Key Attestations (Appendix D of [@!OpenID4VCI]). A Key Attestation MAY include a `trust_chain` JOSE header parameter as specified in Appendix D.1 and Appendix F.1 of [@!OpenID4VCI];
 - Credential Verifiers in signed request objects. The Wallet Instance obtains a presentation request that includes a Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the information obtained in the `wallet_metadata` parameter provided by the Wallet using the Request URI POST;
 - A Credential Issuer in a signed Digital Credential. The Wallet Instance obtains a Digital Credential from its Credential Issuer, which includes the Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the Wallet Attestation used during the Issuance.
 
@@ -1025,6 +1051,22 @@ Niels van Dijk.
         </front>
 </reference>
 
+<reference anchor="I-D.ietf-oauth-attestation-based-client-auth" target="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-attestation-based-client-auth">
+  <front>
+    <title>OAuth 2.0 Attestation-Based Client Authentication</title>
+    <author initials="T." surname="Looker" fullname="Tobias Looker">
+      <organization>MATTR</organization>
+    </author>
+    <author initials="P." surname="Bastian" fullname="Paul Bastian">
+      <organization>Bundesdruckerei</organization>
+    </author>
+    <author initials="C." surname="Bormann" fullname="Christian Bormann">
+      <organization>SPRIND</organization>
+    </author>
+    <date day="6" month="July" year="2026"/>
+  </front>
+</reference>
+
 <reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters/">
   <front>
     <title>OAuth Parameters</title>
@@ -1050,6 +1092,21 @@ The technology described in this specification was made available from contribut
 
    -05
 
+   * Clarified Credential Issuers Establishing Trust in the Wallet
+     Provider and Credential Issuers Establishing Trust in the Wallet
+     to resolve federation-wallet issue #29, with normative references
+     to OpenID4VCI Wallet Attestation (Appendix E), Key Attestation
+     (Appendix D), proof types (Appendix F), Credential Request
+     (Section 8.2), Credential Issuer metadata (Section 12.2.4), and
+     Trust between Wallet and Issuer (Section 13.3), plus OAuth 2.0
+     Attestation-Based Client Authentication.
+   * Distinguished Wallet Attestation (client authentication at PAR /
+     Token endpoints) from Key Attestation (Credential Request proofs).
+   * Profiled use of the OpenID Federation `trust_chain` JOSE header on
+     Wallet Attestations and Key Attestations for offline trust
+     evaluation.
+   * Corrected Terminology so Wallet Attestation and Key Attestation are
+     cited from OpenID4VCI rather than OpenID4VP.
    * Added subsection "OpenID Credential Issuer Metadata Parameters" under OpenID Credential Issuer Entity Type, profiling `openid_credential_issuer` metadata when used in Wallet federations.
    * Documented `credential_issuer`, `authorization_servers`, and the OpenID4VCI parameters (credential_endpoint, nonce_endpoint, display, credential_configurations_supported, etc.) as carried in Federation metadata/metadata_policy.
    * Added `jwks`: scope for signature of responses, tokens, and issued credentials; requirement that public keys used to verify signed Credential Issuer metadata (e.g. at .well-known/openid-credential-issuer per OpenID4VCI 12.2.3) be provided in `openid_credential_issuer` jwks when trust frameworks require it.
