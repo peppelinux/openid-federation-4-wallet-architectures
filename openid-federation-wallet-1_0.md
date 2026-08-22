@@ -598,7 +598,7 @@ Trust Marks SHOULD be defined within the trust framework. Trust Marks are assert
 
 The process of trust establishment in federated environments is illustrated in this section through specific use cases involving Wallet Instances, Credential Issuers (CIs), and Credential Verifiers (CVs).
 
-These use cases are independent: a trust framework MAY require support for any subset of them. Normative requirements in a use case apply only when that use case is used for OpenID Federation trust establishment.
+These use cases are independent: a Trust Framework MAY require support for any subset of them. Normative requirements in a use case apply only when that use case is used for OpenID Federation trust establishment.
 
 ## Establishing Trust with a Credential Verifier Instance
 
@@ -832,19 +832,23 @@ Note: While this section exemplifies the journey of discovery from the perspecti
 
 When a Credential Verifier uses OpenID Federation to establish trust in the Credential Issuer of a presented Digital Credential, the Credential Verifier MUST validate that:
 
-1. the cryptographic key used to sign the Digital Credential is (or was, at the time of issuance) bound to that Credential Issuer;
-2. the Credential Issuer is the Entity it claims to be; and
-3. where required by the trust framework, the Credential Issuer is entitled to issue that Credential (for example, via Trust Marks or metadata policy evaluated over the Trust Chain).
+1. the cryptographic key used to sign the Digital Credential is (or was, at the time of issuance) bound to that Credential Issuer - specifically, that key is listed in the `jwks` property of the Credential Issuer's `openid_credential_issuer` metadata;
+2. the Credential Issuer is the Entity it claims to be - specifically, the Issuer Identifier obtained from the Digital Credential equals the Credential Issuer's Federation Entity Identifier, and a valid Trust Chain can be constructed from that Entity to a Trust Anchor configured by the Credential Verifier, establishing that the Credential Issuer is a (direct or indirect) subordinate of a Federation Entity that the Credential Verifier trusts; and
+3. where required by the Trust Framework, the Credential Issuer is entitled to issue that Credential (for example, via Trust Marks or metadata policy evaluated over the Trust Chain).
 
-This use case applies only when OpenID Federation is the trust mechanism used for that verification. An `https` issuer identifier in a Digital Credential does not by itself imply that the Credential Issuer participates in an OpenID Federation; other key-resolution mechanisms (for example, those defined by SD-JWT VC) MAY apply outside this use case.
+This use case applies only when OpenID Federation is the trust mechanism used for that verification. An `https` Issuer Identifier in a Digital Credential does not by itself imply that the Credential Issuer participates in an OpenID Federation; other key-resolution mechanisms (for example, those defined by SD-JWT VC) MAY apply outside this use case.
 
 ### Obtaining the Credential Issuer Entity Identifier
 
 OpenID Federation Entity Identifiers MUST be `https` URLs, as defined in [@!OpenID.Federation].
 
-When this use case applies and the Credential Issuer is identified in the Digital Credential by an `https` URL (for example, the `iss` claim in an SD-JWT VC or JWT-secured Credential, or the `issuer` / `issuer.id` value in a W3C Verifiable Credential), that URL MUST be used as the Credential Issuer's Federation Entity Identifier. That Entity Identifier MUST equal the `credential_issuer` metadata value and the `iss`/`sub` pair of the Credential Issuer's Entity Configuration, as profiled in the OpenID Credential Issuer Metadata Parameters section of this specification.
+When this use case applies, the Credential Issuer's Federation Entity Identifier is the OpenID4VCI Credential Issuer Identifier (`credential_issuer` metadata). That Entity Identifier MUST equal the `iss`/`sub` pair of the Credential Issuer's Entity Configuration, as profiled in the OpenID Credential Issuer Metadata Parameters section of this specification.
 
-Alternative issuer identifiers that are not `https` URLs (for example, DIDs), and format-specific bindings such as ISO mDOC X.509 certificate chains, are out of scope for this version of the specification.
+When the Digital Credential identifies the Credential Issuer with an `https` URL that is that Credential Issuer Identifier (for example, the `iss` claim in an SD-JWT VC or JWT-secured Credential), that URL MUST be used as the Federation Entity Identifier.
+
+Some credential formats also carry an organizational issuer identifier that MAY differ from the Credential Issuer Identifier (for example, a W3C Verifiable Credential whose `issuer` / `issuer.id` names an institution, while `iss` or the OpenID4VCI `credential_issuer` names the technical issuance service). In that case, the Federation Entity Identifier MUST be the Credential Issuer Identifier, not the distinct organizational identifier. Establishing federation trust in the organizational issuer as a separate Entity is out of scope for this use case.
+
+Alternative Issuer Identifiers that are not `https` URLs (for example, DIDs), and format-specific bindings such as ISO mDOC X.509 certificate chains, are out of scope for this version of the specification. Extensions MAY define how to use DIDs as Leaf Entity Identifiers; that is out of scope for this specification, which defines how Federation Wallets use OpenID Federation 1.0 together with the OpenID4VC specifications.
 
 ### Federation Entity Discovery and Credential Validation
 
@@ -854,7 +858,7 @@ The Credential Verifier MUST establish trust in the Credential Issuer using Fede
 2. Follow `authority_hints`, collect Subordinate Statements, and construct a Trust Chain to a Trust Anchor configured by the Credential Verifier.
 3. Validate the Trust Chain cryptographically and for temporal validity.
 4. Apply metadata policies and obtain the Credential Issuer's final metadata, including cryptographic keys used to verify issued Credentials (for example, keys in `openid_credential_issuer` `jwks`).
-5. Verify the presented Digital Credential using that validated key material, and evaluate any Trust Marks or policies required by the trust framework for issuance entitlement.
+5. Verify the presented Digital Credential using that validated key material, and evaluate any Trust Marks or policies required by the Trust Framework for issuance entitlement.
 
 Alternatively, when the presented Digital Credential includes the `trust_chain` JOSE header parameter defined in Section 4.3 of [@!OpenID.Federation], the Credential Verifier MAY validate that Trust Chain offline as described in the Implementation Considerations for Offline Flows section, without performing real-time Federation Entity Discovery. The Credential Verifier MUST still validate the Trust Chain using a configured Trust Anchor's public keys and MUST verify the Digital Credential using key material consistent with the validated chain.
 
@@ -1115,13 +1119,20 @@ The technology described in this specification was made available from contribut
 
    * Added Federation Trust Discovery use case "Credential Verifiers
      Establishing Trust in Credential Issuers" to resolve
-     federation-wallet issue #48: map https issuer identifiers in
+     federation-wallet issue #48: map https Issuer Identifiers in
      presented Credentials to Federation Entity Identifiers, perform
      Federation Entity Discovery (or validate an offline `trust_chain`),
      and verify Credentials with keys from the validated Trust Chain.
-     DIDs and ISO mDOC X.509 bindings remain out of scope for this
-     version. Clarified that Trust Discovery use cases are independently
-     adoptable by trust frameworks.
+     Specified that key binding is verified against
+     `openid_credential_issuer` `jwks`, and that issuer identity is
+     established by matching the Issuer Identifier to the Federation
+     Entity Identifier and validating a Trust Chain to a configured
+     Trust Anchor. Clarified that W3C VC `issuer` / `issuer.id` is not
+     used as the Federation Entity Identifier when it differs from the
+     OpenID4VCI Credential Issuer Identifier. DIDs and ISO mDOC X.509
+     bindings remain out of scope for this version; extensions MAY
+     define DID Leaf Entities. Clarified that Trust Discovery use cases
+     are independently adoptable by Trust Frameworks.
 
    -05
 
