@@ -1212,7 +1212,7 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left"></td>
 <td class="center">OpenID Federation for Wallet Architectur</td>
-<td class="right">August 2026</td>
+<td class="right">September 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">De Marco, et al.</td>
@@ -1227,7 +1227,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">OpenID Connect Working Group</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-08-22" class="published">22 August 2026</time>
+<time datetime="2026-09-02" class="published">2 September 2026</time>
     </dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
@@ -1366,6 +1366,17 @@ digital wallet architectures.<a href="#section-abstract-1" class="pilcrow">¶</a
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.6">
                 <p id="section-toc.1-1.8.2.6.1"><a href="#section-8.6" class="auto internal xref">8.6</a>.  <a href="#name-wallet-establishing-trust-i" class="internal xref">Wallet Establishing Trust in the Credential Verifier</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.7">
+                <p id="section-toc.1-1.8.2.7.1"><a href="#section-8.7" class="auto internal xref">8.7</a>.  <a href="#name-credential-verifiers-establ" class="internal xref">Credential Verifiers Establishing Trust in Credential Issuers</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.7.2.1">
+                    <p id="section-toc.1-1.8.2.7.2.1.1"><a href="#section-8.7.1" class="auto internal xref">8.7.1</a>.  <a href="#name-obtaining-the-credential-is" class="internal xref">Obtaining the Credential Issuer Entity Identifier</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.7.2.2">
+                    <p id="section-toc.1-1.8.2.7.2.2.1"><a href="#section-8.7.2" class="auto internal xref">8.7.2</a>.  <a href="#name-federation-entity-discovery" class="internal xref">Federation Entity Discovery and Credential Validation</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
@@ -2128,6 +2139,7 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-federation-trust-discovery-" class="section-name selfRef">Federation Trust Discovery Use Cases</a>
       </h2>
 <p id="section-8-1">The process of trust establishment in federated environments is illustrated in this section through specific use cases involving Wallet Instances, Credential Issuers (CIs), and Credential Verifiers (CVs).<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">These use cases are independent: a Trust Framework MAY require support for any subset of them. Normative requirements in a use case apply only when that use case is used for OpenID Federation trust establishment.<a href="#section-8-2" class="pilcrow">¶</a></p>
 <div id="establishing-trust-with-a-credential-verifier-instance">
 <section id="section-8.1">
         <h3 id="name-establishing-trust-with-a-c">
@@ -2399,6 +2411,111 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
 <p id="section-8.6-4"><strong>Figure 6</strong>: Federation Entity Discovery, the Wallet Instance evaluates the trust with a Credential Verifier.<a href="#section-8.6-4" class="pilcrow">¶</a></p>
 </section>
 </div>
+<div id="credential-verifiers-establishing-trust-in-credential-issuers">
+<section id="section-8.7">
+        <h3 id="name-credential-verifiers-establ">
+<a href="#section-8.7" class="section-number selfRef">8.7. </a><a href="#name-credential-verifiers-establ" class="section-name selfRef">Credential Verifiers Establishing Trust in Credential Issuers</a>
+        </h3>
+<p id="section-8.7-1">When a Credential Verifier uses OpenID Federation to establish trust in the Credential Issuer of a presented Digital Credential, the Credential Verifier MUST validate that:<a href="#section-8.7-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-8.7-2">
+<li id="section-8.7-2.1">the cryptographic key used to sign the Digital Credential is (or was, at the time of issuance) bound to that Credential Issuer - specifically, that key is listed in the <code>jwks</code> property of the Credential Issuer's <code>openid_credential_issuer</code> metadata;<a href="#section-8.7-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-8.7-2.2">the Credential Issuer is the Entity it claims to be - specifically, the Issuer Identifier obtained from the Digital Credential equals the Credential Issuer's Federation Entity Identifier, and a valid Trust Chain can be constructed from that Entity to a Trust Anchor configured by the Credential Verifier, establishing that the Credential Issuer is a (direct or indirect) subordinate of a Federation Entity that the Credential Verifier trusts; and<a href="#section-8.7-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-8.7-2.3">where required by the Trust Framework, the Credential Issuer is entitled to issue that Credential (for example, via Trust Marks or metadata policy evaluated over the Trust Chain).<a href="#section-8.7-2.3" class="pilcrow">¶</a>
+</li>
+        </ol>
+<p id="section-8.7-3">This use case applies only when OpenID Federation is the trust mechanism used for that verification. An <code>https</code> Issuer Identifier in a Digital Credential does not by itself imply that the Credential Issuer participates in an OpenID Federation; other key-resolution mechanisms (for example, those defined by SD-JWT VC) MAY apply outside this use case.<a href="#section-8.7-3" class="pilcrow">¶</a></p>
+<div id="obtaining-the-credential-issuer-entity-identifier">
+<section id="section-8.7.1">
+          <h4 id="name-obtaining-the-credential-is">
+<a href="#section-8.7.1" class="section-number selfRef">8.7.1. </a><a href="#name-obtaining-the-credential-is" class="section-name selfRef">Obtaining the Credential Issuer Entity Identifier</a>
+          </h4>
+<p id="section-8.7.1-1">OpenID Federation Entity Identifiers MUST be <code>https</code> URLs, as defined in <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>.<a href="#section-8.7.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.7.1-2">When this use case applies, the Credential Issuer's Federation Entity Identifier is the OpenID4VCI Credential Issuer Identifier (<code>credential_issuer</code> metadata). That Entity Identifier MUST equal the <code>iss</code>/<code>sub</code> pair of the Credential Issuer's Entity Configuration, as profiled in the OpenID Credential Issuer Metadata Parameters section of this specification.<a href="#section-8.7.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.7.1-3">When the Digital Credential identifies the Credential Issuer with an <code>https</code> URL that is that Credential Issuer Identifier (for example, the <code>iss</code> claim in an SD-JWT VC or JWT-secured Credential), that URL MUST be used as the Federation Entity Identifier.<a href="#section-8.7.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.7.1-4">Some credential formats also carry an organizational issuer identifier that MAY differ from the Credential Issuer Identifier (for example, a W3C Verifiable Credential whose <code>issuer</code> / <code>issuer.id</code> names an institution, while <code>iss</code> or the OpenID4VCI <code>credential_issuer</code> names the technical issuance service). In that case, the Federation Entity Identifier MUST be the Credential Issuer Identifier, not the distinct organizational identifier. Establishing federation trust in the organizational issuer as a separate Entity is out of scope for this use case.<a href="#section-8.7.1-4" class="pilcrow">¶</a></p>
+<p id="section-8.7.1-5">Alternative Issuer Identifiers that are not <code>https</code> URLs (for example, DIDs), and format-specific bindings such as ISO mDOC X.509 certificate chains, are out of scope for this version of the specification. Extensions MAY define how to use DIDs as Leaf Entity Identifiers; that is out of scope for this specification, which defines how Federation Wallets use OpenID Federation 1.0 together with the OpenID4VC specifications.<a href="#section-8.7.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="federation-entity-discovery-and-credential-validation">
+<section id="section-8.7.2">
+          <h4 id="name-federation-entity-discovery">
+<a href="#section-8.7.2" class="section-number selfRef">8.7.2. </a><a href="#name-federation-entity-discovery" class="section-name selfRef">Federation Entity Discovery and Credential Validation</a>
+          </h4>
+<p id="section-8.7.2-1">The Credential Verifier MUST establish trust in the Credential Issuer using Federation Entity Discovery as defined in <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>, equivalent to the process illustrated for Wallets in Figure 5:<a href="#section-8.7.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-8.7.2-2">
+<li id="section-8.7.2-2.1">Fetch the Credential Issuer's Entity Configuration using the Entity Identifier obtained above.<a href="#section-8.7.2-2.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-8.7.2-2.2">Follow <code>authority_hints</code>, collect Subordinate Statements, and construct a Trust Chain to a Trust Anchor configured by the Credential Verifier.<a href="#section-8.7.2-2.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-8.7.2-2.3">Validate the Trust Chain cryptographically and for temporal validity.<a href="#section-8.7.2-2.3" class="pilcrow">¶</a>
+</li>
+            <li id="section-8.7.2-2.4">Apply metadata policies and obtain the Credential Issuer's final metadata, including cryptographic keys used to verify issued Credentials (for example, keys in <code>openid_credential_issuer</code> <code>jwks</code>).<a href="#section-8.7.2-2.4" class="pilcrow">¶</a>
+</li>
+            <li id="section-8.7.2-2.5">Verify the presented Digital Credential using that validated key material, and evaluate any Trust Marks or policies required by the Trust Framework for issuance entitlement.<a href="#section-8.7.2-2.5" class="pilcrow">¶</a>
+</li>
+          </ol>
+<p id="section-8.7.2-3">Alternatively, when the presented Digital Credential includes the <code>trust_chain</code> JOSE header parameter defined in Section 4.3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>, the Credential Verifier MAY validate that Trust Chain offline as described in the Implementation Considerations for Offline Flows section, without performing real-time Federation Entity Discovery. The Credential Verifier MUST still validate the Trust Chain using a configured Trust Anchor's public keys and MUST verify the Digital Credential using key material consistent with the validated chain.<a href="#section-8.7.2-3" class="pilcrow">¶</a></p>
+<div class="breakable lang-ascii-art sourcecode" id="section-8.7.2-4">
+<pre>        +-------------------+                      +-----------------+ +-------------------------+
+        |Credential Verifier|                      |Credential Issuer| |Intermediate/Trust Anchor|
+        +--------+----------+                      +--------+--------+ +--------+----------------+
+                 |       Fetch Entity Configuration         |                     |
+                 |-----------------------------------------&gt;|                     |
+                 |                                          |                     |
+                 |----+                                     |                     |
+                 |    | Extract Authority Hints             |                     |
+                 |    | from Entity Configuration           |                     |
+                 |&lt;---+                                     |                     |
+                 |                                          |                     |
++-------+--------+------------------------------------------+---------------------+----------+
+| LOOP  |for each Authority Hint                            |                     |          |
++-------+        |                                          |                     |          |
+|                |                   Fetch Entity Configuration                   |          |
+|                |---------------------------------------------------------------&gt;|          |
+|                |                                          |                     |          |
+|                |                    Fetch Subordinate Statement                 |          |
+|                |---------------------------------------------------------------&gt;|          |
+|                |                                          |                     |          |
+|                |----+                                     |                     |          |
+|                |    | Validate the previous statement     |                     |          |
+|                |&lt;---+ using the Federation Entity Keys    |                     |          |
+|                |      provided in the Subordinate Statement|                    |          |
+|                |                                          |                     |          |
++----------------+------------------------------------------+---------------------+----------+
+                 |                                          |                     |
+                 |----+                                     |                     |
+                 |    | Validate Trust Chain                |                     |
+                 |&lt;---+                                     |                     |
+                 |                                          |                     |
++------+---------+---------------------------------------+  |                     |
+| ALT  |If Trust Chain is Valid and Unexpired            |  |                     |
++------+         |                                       |  |                     |
+|                |----+                                  |  |                     |
+|                |    | Derive final metadata and keys   |  |                     |
+|                |&lt;---+                                  |  |                     |
+|                |                                       |  |                     |
+|                |----+                                  |  |                     |
+|                |    | Verify Digital Credential        |  |                     |
+|                |    | and evaluate issuance policies   |  |                     |
+|                |&lt;---+                                  |  |                     |
++----------------+---------------------------------------+  |                     |
+|                |                                       |  |                     |
+|                |----+                                  |  |                     |
+|                |    | Abort Process with Error         |  |                     |
+|                |&lt;---+                                  |  |                     |
++----------------+---------------------------------------+  |                     |
+        +--------+----------+                      +--------+--------+ +--------+----------------+
+        |Credential Verifier|                      |Credential Issuer| |Intermediate/Trust Anchor|
+        +-------------------+                      +-----------------+ +-------------------------+
+</pre><a href="#section-8.7.2-4" class="pilcrow">¶</a>
+</div>
+<p id="section-8.7.2-5"><strong>Figure 7</strong>: Federation Entity Discovery, the Credential Verifier evaluates trust with a Credential Issuer.<a href="#section-8.7.2-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
 </section>
 </div>
 <div id="implementation-considerations-for-offline-flows">
@@ -2415,7 +2532,7 @@ obtained from Trust Chain evaluation.<a href="#section-7.1.1-7" class="pilcrow">
 </li>
         <li class="compact" id="section-9-3.3">Credential Verifiers in signed request objects. The Wallet Instance obtains a presentation request that includes a Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the information obtained in the <code>wallet_metadata</code> parameter provided by the Wallet using the Request URI POST;<a href="#section-9-3.3" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-9-3.4">A Credential Issuer in a signed Digital Credential. The Wallet Instance obtains a Digital Credential from its Credential Issuer, which includes the Trust Chain using a Trust Anchor that the Credential Verifier has in common with the Wallet Provider, according to the Wallet Attestation used during the Issuance.<a href="#section-9-3.4" class="pilcrow">¶</a>
+        <li class="compact" id="section-9-3.4">Credential Issuers in signed Digital Credentials. A Credential Verifier (or Wallet Instance) obtaining such a Credential MAY use the included Trust Chain to establish trust in the Credential Issuer without real-time Federation Entity Discovery, as described in Credential Verifiers Establishing Trust in Credential Issuers.<a href="#section-9-3.4" class="pilcrow">¶</a>
 </li>
       </ul>
 <p id="section-9-4">The Entity that receives the data object including the JWT <code>trust_chain</code>, such as the Wallet Instance obtaining a signed request object, verifies the Trust Chain using the Trust Anchor's public keys and applies any metadata policies, without needing to have a working network connection for reaching the Federation API.<a href="#section-9-4" class="pilcrow">¶</a></p>
@@ -2574,113 +2691,133 @@ Niels van Dijk.<a href="#section-12-1" class="pilcrow">¶</a></p>
 <a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-document-history" class="section-name selfRef">Document History</a>
       </h2>
 <p id="appendix-B-1">[[ To be removed from the final specification ]]<a href="#appendix-B-1" class="pilcrow">¶</a></p>
-<p id="appendix-B-2">-05<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">-06<a href="#appendix-B-2" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="appendix-B-3.1">Clarified Credential Issuers Establishing Trust in the Wallet
+<li class="compact" id="appendix-B-3.1">Added Federation Trust Discovery use case "Credential Verifiers
+ Establishing Trust in Credential Issuers" to resolve
+ federation-wallet issue #48: map https Issuer Identifiers in
+ presented Credentials to Federation Entity Identifiers, perform
+ Federation Entity Discovery (or validate an offline <code>trust_chain</code>),
+ and verify Credentials with keys from the validated Trust Chain.
+ Specified that key binding is verified against
+ <code>openid_credential_issuer</code> <code>jwks</code>, and that issuer identity is
+ established by matching the Issuer Identifier to the Federation
+ Entity Identifier and validating a Trust Chain to a configured
+ Trust Anchor. Clarified that W3C VC <code>issuer</code> / <code>issuer.id</code> is not
+ used as the Federation Entity Identifier when it differs from the
+ OpenID4VCI Credential Issuer Identifier. DIDs and ISO mDOC X.509
+ bindings remain out of scope for this version; extensions MAY
+ define DID Leaf Entities. Clarified that Trust Discovery use cases
+ are independently adoptable by Trust Frameworks.<a href="#appendix-B-3.1" class="pilcrow">¶</a>
+</li>
+      </ul>
+<p id="appendix-B-4">-05<a href="#appendix-B-4" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-B-5.1">Clarified Credential Issuers Establishing Trust in the Wallet
  Provider and Credential Issuers Establishing Trust in the Wallet
  to resolve federation-wallet issue #29, with normative references
  to OpenID4VCI Wallet Attestation (Appendix E), Key Attestation
  (Appendix D), proof types (Appendix F), Credential Request
  (Section 8.2), Credential Issuer metadata (Section 12.2.4), and
  Trust between Wallet and Issuer (Section 13.3), plus OAuth 2.0
- Attestation-Based Client Authentication.<a href="#appendix-B-3.1" class="pilcrow">¶</a>
+ Attestation-Based Client Authentication.<a href="#appendix-B-5.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.2">Distinguished Wallet Attestation (client authentication at PAR /
- Token endpoints) from Key Attestation (Credential Request proofs).<a href="#appendix-B-3.2" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.2">Distinguished Wallet Attestation (client authentication at PAR /
+ Token endpoints) from Key Attestation (Credential Request proofs).<a href="#appendix-B-5.2" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.3">Profiled use of the OpenID Federation <code>trust_chain</code> JOSE header on
+        <li class="compact" id="appendix-B-5.3">Profiled use of the OpenID Federation <code>trust_chain</code> JOSE header on
  Wallet Attestations and Key Attestations for offline trust
- evaluation.<a href="#appendix-B-3.3" class="pilcrow">¶</a>
+ evaluation.<a href="#appendix-B-5.3" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.4">Corrected Terminology so Wallet Attestation and Key Attestation are
- cited from OpenID4VCI rather than OpenID4VP.<a href="#appendix-B-3.4" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.4">Corrected Terminology so Wallet Attestation and Key Attestation are
+ cited from OpenID4VCI rather than OpenID4VP.<a href="#appendix-B-5.4" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.5">Added subsection "OpenID Credential Issuer Metadata Parameters" under OpenID Credential Issuer Entity Type, profiling <code>openid_credential_issuer</code> metadata when used in Wallet federations.<a href="#appendix-B-3.5" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.5">Added subsection "OpenID Credential Issuer Metadata Parameters" under OpenID Credential Issuer Entity Type, profiling <code>openid_credential_issuer</code> metadata when used in Wallet federations.<a href="#appendix-B-5.5" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.6">Documented <code>credential_issuer</code>, <code>authorization_servers</code>, and the OpenID4VCI parameters (credential_endpoint, nonce_endpoint, display, credential_configurations_supported, etc.) as carried in Federation metadata/metadata_policy.<a href="#appendix-B-3.6" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.6">Documented <code>credential_issuer</code>, <code>authorization_servers</code>, and the OpenID4VCI parameters (credential_endpoint, nonce_endpoint, display, credential_configurations_supported, etc.) as carried in Federation metadata/metadata_policy.<a href="#appendix-B-5.6" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.7">Added <code>jwks</code>: scope for signature of responses, tokens, and issued credentials; requirement that public keys used to verify signed Credential Issuer metadata (e.g. at .well-known/openid-credential-issuer per OpenID4VCI 12.2.3) be provided in <code>openid_credential_issuer</code> jwks when trust frameworks require it.<a href="#appendix-B-3.7" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.7">Added <code>jwks</code>: scope for signature of responses, tokens, and issued credentials; requirement that public keys used to verify signed Credential Issuer metadata (e.g. at .well-known/openid-credential-issuer per OpenID4VCI 12.2.3) be provided in <code>openid_credential_issuer</code> jwks when trust frameworks require it.<a href="#appendix-B-5.7" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.8">Extended OpenID Credential Verifier entity type with additional metadata
+        <li class="compact" id="appendix-B-5.8">Extended OpenID Credential Verifier entity type with additional metadata
  parameters: jwks, request_uris, response_uris, redirect_uris, and
  dcql_queries, with definitions and rationale aligned to the Trusted
- Third-Party trust model.<a href="#appendix-B-3.8" class="pilcrow">¶</a>
+ Third-Party trust model.<a href="#appendix-B-5.8" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.9">Specified that when a Credential Verifier participates in a federation,
+        <li class="compact" id="appendix-B-5.9">Specified that when a Credential Verifier participates in a federation,
  Wallets MUST use jwks from federation metadata and MUST ignore jwks
- from client_metadata in the Authorization Request.<a href="#appendix-B-3.9" class="pilcrow">¶</a>
+ from client_metadata in the Authorization Request.<a href="#appendix-B-5.9" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.10">Added section on using openid_credential_verifier metadata and
+        <li class="compact" id="appendix-B-5.10">Added section on using openid_credential_verifier metadata and
  metadata_policy in Subordinate Statements for policy enforcement by
- superior entities (endpoints, keys, dcql_queries).<a href="#appendix-B-3.10" class="pilcrow">¶</a>
+ superior entities (endpoints, keys, dcql_queries).<a href="#appendix-B-5.10" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.11">Clarified dcql_queries override rules: metadata in a Subordinate
+        <li class="compact" id="appendix-B-5.11">Clarified dcql_queries override rules: metadata in a Subordinate
  Statement overrides request/client_metadata; metadata_policy applies to
  verifier metadata or, if absent, to client_metadata; profiles MAY use
- Trust Marks to convey dcql_queries-related policies.<a href="#appendix-B-3.11" class="pilcrow">¶</a>
+ Trust Marks to convey dcql_queries-related policies.<a href="#appendix-B-5.11" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.12">Defined dcql_queries as a non-empty array of DCQL query objects (as in
+        <li class="compact" id="appendix-B-5.12">Defined dcql_queries as a non-empty array of DCQL query objects (as in
  OpenID4VP) so verifiers can publish multiple authorized queries for
- different situations.<a href="#appendix-B-3.12" class="pilcrow">¶</a>
+ different situations.<a href="#appendix-B-5.12" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.13">Added IANA Considerations registering the dcql_queries parameter.<a href="#appendix-B-3.13" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.13">Added IANA Considerations registering the dcql_queries parameter.<a href="#appendix-B-5.13" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-3.14">Added Security Considerations.<a href="#appendix-B-3.14" class="pilcrow">¶</a>
-</li>
-      </ul>
-<p id="appendix-B-4">-04<a href="#appendix-B-4" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-B-5.1">Changed name to OpenID Federation for Wallet Architectures 1.0.<a href="#appendix-B-5.1" class="pilcrow">¶</a>
-</li>
-        <li class="compact" id="appendix-B-5.2">Updated references.<a href="#appendix-B-5.2" class="pilcrow">¶</a>
-</li>
-        <li class="compact" id="appendix-B-5.3">Removed unused references.<a href="#appendix-B-5.3" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-5.14">Added Security Considerations.<a href="#appendix-B-5.14" class="pilcrow">¶</a>
 </li>
       </ul>
-<p id="appendix-B-6">-03<a href="#appendix-B-6" class="pilcrow">¶</a></p>
+<p id="appendix-B-6">-04<a href="#appendix-B-6" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="appendix-B-7.1">Added section about Credential Issuers establishing trust with Wallet Solution<a href="#appendix-B-7.1" class="pilcrow">¶</a>
+<li class="compact" id="appendix-B-7.1">Changed name to OpenID Federation for Wallet Architectures 1.0.<a href="#appendix-B-7.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-7.2">Added sequence diagrams using ascii-arts<a href="#appendix-B-7.2" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-7.2">Updated references.<a href="#appendix-B-7.2" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-7.3">Renamed Third-Party Trust Model to Trusted Third-Party Model<a href="#appendix-B-7.3" class="pilcrow">¶</a>
-</li>
-        <li class="compact" id="appendix-B-7.4">Added legends to the figures<a href="#appendix-B-7.4" class="pilcrow">¶</a>
-</li>
-        <li class="compact" id="appendix-B-7.5">Added section about Wallet Checking the Non-Revocation of its Wallet Provider<a href="#appendix-B-7.5" class="pilcrow">¶</a>
-</li>
-        <li class="compact" id="appendix-B-7.6">Added implementation Considerations for Offline Flows<a href="#appendix-B-7.6" class="pilcrow">¶</a>
-</li>
-        <li class="compact" id="appendix-B-7.7">Improved clarification about using metadata in Subordiante Statements<a href="#appendix-B-7.7" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-7.3">Removed unused references.<a href="#appendix-B-7.3" class="pilcrow">¶</a>
 </li>
       </ul>
-<p id="appendix-B-8">-02<a href="#appendix-B-8" class="pilcrow">¶</a></p>
+<p id="appendix-B-8">-03<a href="#appendix-B-8" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="appendix-B-9.1">Added non-normative example about using policies with metadata and trust marks<a href="#appendix-B-9.1" class="pilcrow">¶</a>
+<li class="compact" id="appendix-B-9.1">Added section about Credential Issuers establishing trust with Wallet Solution<a href="#appendix-B-9.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-9.2">Added Credential Verifier and Credential Verifier Instance<a href="#appendix-B-9.2" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-9.2">Added sequence diagrams using ascii-arts<a href="#appendix-B-9.2" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-9.3">Added section about Credential Verifier Instance<a href="#appendix-B-9.3" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-9.3">Renamed Third-Party Trust Model to Trusted Third-Party Model<a href="#appendix-B-9.3" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-9.4">Illustrative rationale about Authentic Sources and Wallet Provider within the Four-Party Model sections<a href="#appendix-B-9.4" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-9.4">Added legends to the figures<a href="#appendix-B-9.4" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-9.5">Moved text on Possible Use of Metadata Parameters by Wallet Ecosystems to issue #22.<a href="#appendix-B-9.5" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-9.5">Added section about Wallet Checking the Non-Revocation of its Wallet Provider<a href="#appendix-B-9.5" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-9.6">Added warning about the specification not being final.<a href="#appendix-B-9.6" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-9.6">Added implementation Considerations for Offline Flows<a href="#appendix-B-9.6" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-9.7">Improved clarification about using metadata in Subordiante Statements<a href="#appendix-B-9.7" class="pilcrow">¶</a>
 </li>
       </ul>
-<p id="appendix-B-10">-01<a href="#appendix-B-10" class="pilcrow">¶</a></p>
+<p id="appendix-B-10">-02<a href="#appendix-B-10" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="appendix-B-11.1">Created Scope section describing the purpose of the document and collaboration with other working groups.<a href="#appendix-B-11.1" class="pilcrow">¶</a>
+<li class="compact" id="appendix-B-11.1">Added non-normative example about using policies with metadata and trust marks<a href="#appendix-B-11.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-11.2">Moved metadata tables and examples to an informative appendix on possible usage.<a href="#appendix-B-11.2" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-11.2">Added Credential Verifier and Credential Verifier Instance<a href="#appendix-B-11.2" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="appendix-B-11.3">Fixed #10: Renamed <code>openid_wallet_relying_party</code> to <code>openid_credential_verifier</code>.<a href="#appendix-B-11.3" class="pilcrow">¶</a>
+        <li class="compact" id="appendix-B-11.3">Added section about Credential Verifier Instance<a href="#appendix-B-11.3" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-11.4">Illustrative rationale about Authentic Sources and Wallet Provider within the Four-Party Model sections<a href="#appendix-B-11.4" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-11.5">Moved text on Possible Use of Metadata Parameters by Wallet Ecosystems to issue #22.<a href="#appendix-B-11.5" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-11.6">Added warning about the specification not being final.<a href="#appendix-B-11.6" class="pilcrow">¶</a>
 </li>
       </ul>
-<p id="appendix-B-12">-00<a href="#appendix-B-12" class="pilcrow">¶</a></p>
+<p id="appendix-B-12">-01<a href="#appendix-B-12" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="appendix-B-13.1">Initial version<a href="#appendix-B-13.1" class="pilcrow">¶</a>
+<li class="compact" id="appendix-B-13.1">Created Scope section describing the purpose of the document and collaboration with other working groups.<a href="#appendix-B-13.1" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-13.2">Moved metadata tables and examples to an informative appendix on possible usage.<a href="#appendix-B-13.2" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-13.3">Fixed #10: Renamed <code>openid_wallet_relying_party</code> to <code>openid_credential_verifier</code>.<a href="#appendix-B-13.3" class="pilcrow">¶</a>
+</li>
+      </ul>
+<p id="appendix-B-14">-00<a href="#appendix-B-14" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-B-15.1">Initial version<a href="#appendix-B-15.1" class="pilcrow">¶</a>
 </li>
       </ul>
 </section>
